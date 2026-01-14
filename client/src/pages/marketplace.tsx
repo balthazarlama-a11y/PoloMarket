@@ -6,12 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, Grid2X2, List } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import horse1 from "@assets/generated_images/portrait_of_a_thoroughbred_polo_pony.png";
 import horse2 from "@assets/generated_images/action_shot_of_a_polo_horse.png";
 import horse3 from "@assets/generated_images/close_up_of_a_polo_horse_head.png";
 
-// Mock Data duplicating for grid fill
+// Mock Data
 const horses = [
   {
     id: "1",
@@ -20,7 +21,7 @@ const horses = [
     currency: "USD",
     image: horse1,
     location: "Buenos Aires, AR",
-    age: 7,
+    age: 8,
     height: "1.56",
     sex: "Yegua" as const,
     type: "Venta" as const,
@@ -89,65 +90,65 @@ const horses = [
 
 export default function Marketplace() {
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-[#FDFCF9]">
       <Navbar />
       
-      <div className="container px-4 py-8 flex-1">
-        <div className="flex flex-col md:flex-row gap-8">
+      <div className="container px-4 py-12 flex-1">
+        <div className="flex flex-col md:flex-row gap-12">
           
           {/* Sidebar Filters */}
-          <aside className="w-full md:w-64 shrink-0 space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="font-serif text-xl font-bold">Filtros</h2>
-              <Button variant="ghost" size="sm" className="h-auto p-0 text-muted-foreground hover:text-primary">
-                Limpiar
+          <aside className="w-full md:w-72 shrink-0 space-y-8">
+            <div className="flex items-center justify-between pb-4 border-b">
+              <h2 className="font-serif text-2xl font-bold text-primary">Filtros</h2>
+              <Button variant="ghost" size="sm" className="h-auto p-0 text-muted-foreground hover:text-secondary font-bold text-xs uppercase tracking-widest">
+                Limpiar Todo
               </Button>
             </div>
             
-            <Accordion type="multiple" defaultValue={["operation", "price", "location"]}>
+            <Accordion type="multiple" defaultValue={["operation", "price", "location"]} className="w-full">
               
-              <AccordionItem value="operation">
-                <AccordionTrigger>Operación</AccordionTrigger>
+              <AccordionItem value="operation" className="border-none">
+                <AccordionTrigger className="font-bold py-4 hover:no-underline">Operación</AccordionTrigger>
                 <AccordionContent>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="sale" />
-                      <Label htmlFor="sale">Venta</Label>
+                  <div className="space-y-4 pt-2">
+                    <div className="flex items-center space-x-3 group cursor-pointer">
+                      <Checkbox id="sale" className="border-primary/20 data-[state=checked]:bg-primary" />
+                      <Label htmlFor="sale" className="font-medium cursor-pointer group-hover:text-primary transition-colors">Venta</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="rent" />
-                      <Label htmlFor="rent">Arriendo</Label>
+                    <div className="flex items-center space-x-3 group cursor-pointer">
+                      <Checkbox id="rent" className="border-primary/20 data-[state=checked]:bg-primary" />
+                      <Label htmlFor="rent" className="font-medium cursor-pointer group-hover:text-primary transition-colors">Arriendo</Label>
                     </div>
                   </div>
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="location">
-                <AccordionTrigger>Ubicación</AccordionTrigger>
+              <AccordionItem value="location" className="border-none">
+                <AccordionTrigger className="font-bold py-4 hover:no-underline">Ubicación</AccordionTrigger>
                 <AccordionContent>
-                   <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="cl" />
-                      <Label htmlFor="cl">Chile</Label>
+                   <div className="space-y-4 pt-2">
+                    <div className="flex items-center space-x-3 group cursor-pointer">
+                      <Checkbox id="cl" className="border-primary/20 data-[state=checked]:bg-primary" />
+                      <Label htmlFor="cl" className="font-medium cursor-pointer group-hover:text-primary transition-colors">Chile</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="ar" />
-                      <Label htmlFor="ar">Argentina</Label>
+                    <div className="flex items-center space-x-3 group cursor-pointer">
+                      <Checkbox id="ar" className="border-primary/20 data-[state=checked]:bg-primary" />
+                      <Label htmlFor="ar" className="font-medium cursor-pointer group-hover:text-primary transition-colors">Argentina</Label>
                     </div>
-                     <div className="flex items-center space-x-2">
-                      <Checkbox id="us" />
-                      <Label htmlFor="us">USA</Label>
+                     <div className="flex items-center space-x-3 group cursor-pointer">
+                      <Checkbox id="us" className="border-primary/20 data-[state=checked]:bg-primary" />
+                      <Label htmlFor="us" className="font-medium cursor-pointer group-hover:text-primary transition-colors">USA</Label>
                     </div>
                   </div>
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="price">
-                <AccordionTrigger>Precio (USD)</AccordionTrigger>
+              <AccordionItem value="price" className="border-none">
+                <AccordionTrigger className="font-bold py-4 hover:no-underline">Rango de Precio (USD)</AccordionTrigger>
                 <AccordionContent>
-                  <div className="pt-4 px-2">
-                    <Slider defaultValue={[50000]} max={100000} step={1000} />
-                    <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+                  <div className="pt-6 px-2">
+                    <Slider defaultValue={[50000]} max={100000} step={1000} className="[&_[role=slider]]:bg-secondary" />
+                    <div className="flex justify-between mt-4 text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">
                       <span>$0</span>
                       <span>$100k+</span>
                     </div>
@@ -155,21 +156,21 @@ export default function Marketplace() {
                 </AccordionContent>
               </AccordionItem>
               
-               <AccordionItem value="sex">
-                <AccordionTrigger>Sexo</AccordionTrigger>
+               <AccordionItem value="sex" className="border-none">
+                <AccordionTrigger className="font-bold py-4 hover:no-underline">Sexo</AccordionTrigger>
                 <AccordionContent>
-                   <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="mare" />
-                      <Label htmlFor="mare">Yegua</Label>
+                   <div className="space-y-4 pt-2">
+                    <div className="flex items-center space-x-3 group cursor-pointer">
+                      <Checkbox id="mare" className="border-primary/20 data-[state=checked]:bg-primary" />
+                      <Label htmlFor="mare" className="font-medium cursor-pointer group-hover:text-primary transition-colors">Yegua</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="gelding" />
-                      <Label htmlFor="gelding">Castrado</Label>
+                    <div className="flex items-center space-x-3 group cursor-pointer">
+                      <Checkbox id="gelding" className="border-primary/20 data-[state=checked]:bg-primary" />
+                      <Label htmlFor="gelding" className="font-medium cursor-pointer group-hover:text-primary transition-colors">Castrado</Label>
                     </div>
-                     <div className="flex items-center space-x-2">
-                      <Checkbox id="stallion" />
-                      <Label htmlFor="stallion">Padrillo</Label>
+                     <div className="flex items-center space-x-3 group cursor-pointer">
+                      <Checkbox id="stallion" className="border-primary/20 data-[state=checked]:bg-primary" />
+                      <Label htmlFor="stallion" className="font-medium cursor-pointer group-hover:text-primary transition-colors">Padrillo</Label>
                     </div>
                   </div>
                 </AccordionContent>
@@ -181,37 +182,54 @@ export default function Marketplace() {
           {/* Main Content */}
           <main className="flex-1">
             {/* Top Bar */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-6">
               <div>
-                <h1 className="font-serif text-3xl font-bold text-primary">Caballos Disponibles</h1>
-                <p className="text-muted-foreground text-sm">{horses.length} resultados encontrados</p>
+                <h1 className="font-serif text-4xl font-bold text-primary mb-2">Marketplace</h1>
+                <p className="text-muted-foreground text-sm font-medium uppercase tracking-widest">{horses.length} caballos disponibles ahora</p>
               </div>
               
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <div className="relative flex-1 sm:w-64">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Buscar por nombre..." className="pl-9" />
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <div className="relative flex-1 sm:w-80">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/40" />
+                  <Input placeholder="Buscar por nombre, criador o línea..." className="pl-11 h-12 bg-white border-primary/5 focus-visible:ring-secondary/30 rounded-full shadow-sm" />
                 </div>
-                <Button variant="outline" size="icon" className="shrink-0 md:hidden">
-                  <SlidersHorizontal className="h-4 w-4" />
-                </Button>
+                <div className="flex gap-1 bg-white p-1 rounded-full shadow-sm border border-primary/5">
+                   <Button variant="secondary" size="icon" className="h-10 w-10 rounded-full bg-primary text-white">
+                    <Grid2X2 className="h-4 w-4" />
+                   </Button>
+                   <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
+                    <List className="h-4 w-4 text-primary/40" />
+                   </Button>
+                </div>
               </div>
             </div>
             
             {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {horses.map(horse => (
-                <HorseCard key={horse.id} horse={horse} />
-              ))}
-            </div>
+            <motion.div 
+              layout
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              <AnimatePresence>
+                {horses.map((horse, idx) => (
+                  <motion.div
+                    key={horse.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                  >
+                    <HorseCard horse={horse} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
             
-            {/* Pagination Mockup */}
-            <div className="flex justify-center mt-12 gap-2">
-              <Button variant="outline" disabled>Anterior</Button>
-              <Button variant="secondary" className="text-white">1</Button>
-              <Button variant="outline">2</Button>
-              <Button variant="outline">3</Button>
-              <Button variant="outline">Siguiente</Button>
+            {/* Pagination */}
+            <div className="flex justify-center mt-20 gap-3">
+              <Button variant="outline" disabled className="h-12 px-6 rounded-full border-primary/10">Anterior</Button>
+              <Button variant="default" className="h-12 w-12 rounded-full bg-primary text-white font-bold">1</Button>
+              <Button variant="outline" className="h-12 w-12 rounded-full border-primary/10 hover:border-primary transition-colors">2</Button>
+              <Button variant="outline" className="h-12 w-12 rounded-full border-primary/10 hover:border-primary transition-colors">3</Button>
+              <Button variant="outline" className="h-12 px-6 rounded-full border-primary/10 hover:border-primary transition-colors">Siguiente</Button>
             </div>
           </main>
           

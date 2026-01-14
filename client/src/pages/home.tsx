@@ -101,7 +101,11 @@ export default function Home() {
                 </SelectContent>
               </Select>
             </div>
-            <Button size="lg" className="h-12 px-8 bg-primary hover:bg-primary/90 text-white font-medium">
+            <Button 
+              size="lg" 
+              className="h-12 px-8 bg-primary hover:bg-primary/90 text-white font-medium shadow-lg hover:shadow-xl transition-all"
+              onClick={() => window.location.href = '/marketplace'}
+            >
               <Search className="mr-2 h-4 w-4" /> Buscar
             </Button>
           </div>
@@ -137,9 +141,12 @@ export default function Home() {
               <span className="text-secondary font-medium tracking-wider text-sm uppercase">Selección del Mes</span>
               <h2 className="text-4xl font-serif font-bold text-primary mt-2">Destacados</h2>
             </div>
-            <Button variant="outline" className="hidden md:flex hover:bg-primary hover:text-white transition-colors">
-              Ver todos los caballos
-            </Button>
+            <Link href="/marketplace">
+              <Button variant="outline" className="hidden md:flex hover:bg-primary hover:text-white transition-all duration-300 group">
+                Ver todos los caballos
+                <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+              </Button>
+            </Link>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -166,11 +173,11 @@ export default function Home() {
                <p className="text-gray-400 text-lg">Únete a la plataforma más exclusiva y llega a compradores serios. Gestiona tus publicaciones y ventas desde un panel profesional.</p>
                <div className="flex flex-col sm:flex-row gap-4 pt-4">
                  <Link href="/verification">
-                   <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-white border-none">
+                   <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-white border-none shadow-xl hover:scale-[1.02] transition-transform">
                      Crear Cuenta Profesional
                    </Button>
                  </Link>
-                 <Button size="lg" variant="outline" className="text-white border-white/20 hover:bg-white/10">
+                 <Button size="lg" variant="outline" className="text-white border-white/20 hover:bg-white/10 transition-colors">
                    Conocer planes
                  </Button>
                </div>

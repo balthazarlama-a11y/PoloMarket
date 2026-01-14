@@ -41,13 +41,13 @@ export function Navbar() {
           ))}
           <div className="flex items-center gap-4 border-l pl-6 ml-2">
             <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="gap-2">
+              <Button variant="ghost" size="sm" className="gap-2 hover-elevate transition-all">
                 <User className="h-4 w-4" />
                 Mi Cuenta
               </Button>
             </Link>
             <Link href="/verification">
-              <Button size="sm" className="bg-secondary hover:bg-secondary/90 text-white">
+              <Button size="sm" className="bg-secondary hover:bg-secondary/90 text-white shadow-sm hover:shadow-md transition-all px-6">
                 Publicar Caballo
               </Button>
             </Link>
