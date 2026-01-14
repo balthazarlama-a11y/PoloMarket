@@ -46,7 +46,7 @@ export function Navbar() {
                 Mi Cuenta
               </Button>
             </Link>
-            <Link href="/dashboard">
+            <Link href="/verification">
               <Button size="sm" className="bg-secondary hover:bg-secondary/90 text-white">
                 Publicar Caballo
               </Button>
@@ -83,7 +83,7 @@ export function Navbar() {
                 Mi Cuenta
               </Button>
             </Link>
-             <Link href="/dashboard">
+             <Link href="/verification">
               <Button className="w-full bg-secondary hover:bg-secondary/90 text-white">
                 Publicar Caballo
               </Button>

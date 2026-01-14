@@ -1,5 +1,6 @@
 import { Navbar, Footer } from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { HorseCard } from "@/components/ui/horse-card";
@@ -164,9 +165,11 @@ export default function Home() {
                <h2 className="text-4xl md:text-5xl font-serif font-bold text-white">¿Eres criador o vendedor?</h2>
                <p className="text-gray-400 text-lg">Únete a la plataforma más exclusiva y llega a compradores serios. Gestiona tus publicaciones y ventas desde un panel profesional.</p>
                <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                 <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-white border-none">
-                   Crear Cuenta Profesional
-                 </Button>
+                 <Link href="/verification">
+                   <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-white border-none">
+                     Crear Cuenta Profesional
+                   </Button>
+                 </Link>
                  <Button size="lg" variant="outline" className="text-white border-white/20 hover:bg-white/10">
                    Conocer planes
                  </Button>
