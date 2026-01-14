@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { HorseCard } from "@/components/ui/horse-card";
 import { Search, ShieldCheck, Trophy, Users } from "lucide-react";
-import heroImage from "@assets/generated_images/polo_player_riding_a_horse_in_a_green_field.png";
+import heroImage from "@assets/generated_images/polo_horse_running_in_a_field_at_sunset.png";
 import horse1 from "@assets/generated_images/portrait_of_a_thoroughbred_polo_pony.png";
 import horse2 from "@assets/generated_images/action_shot_of_a_polo_horse.png";
 import horse3 from "@assets/generated_images/close_up_of_a_polo_horse_head.png";
@@ -69,7 +69,7 @@ export default function Home() {
             EL MARKETPLACE PREMIER DE POLO
           </span>
           <h1 className="font-serif text-5xl md:text-7xl font-bold text-white mb-6 leading-tight max-w-4xl mx-auto drop-shadow-lg animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
-            La excelencia del polo, <span className="text-secondary italic">a un solo clic</span> de distancia
+            Encuentra tu próximo <span className="text-secondary italic">compañero</span> de juego
           </h1>
           <p className="text-lg text-white/90 mb-10 max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
             Compra, vende y arrienda caballos de polo con la seguridad y confianza de nuestra comunidad verificada.
