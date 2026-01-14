@@ -69,7 +69,7 @@ export default function Home() {
             EL MARKETPLACE PREMIER DE POLO
           </span>
           <h1 className="font-serif text-5xl md:text-7xl font-bold text-white mb-6 leading-tight max-w-4xl mx-auto drop-shadow-lg animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
-            Encuentra tu próximo <span className="text-secondary italic">compañero</span> de juego
+            La excelencia del polo, <span className="text-secondary italic">a un solo clic</span> de distancia
           </h1>
           <p className="text-lg text-white/90 mb-10 max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
             Compra, vende y arrienda caballos de polo con la seguridad y confianza de nuestra comunidad verificada.
