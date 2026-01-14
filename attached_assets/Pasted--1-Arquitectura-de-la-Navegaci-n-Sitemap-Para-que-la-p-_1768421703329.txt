@@ -1,0 +1,28 @@
+**1. Arquitectura de la Navegación (Sitemap)**
+Para que la página sea intuitiva, debe estar dividida en secciones claras:
+• **Home (Inicio):** Buscador rápido (Venta/Arriendo), destacados del mes y explicación de cómo funciona.
+• **Marketplace:** * Filtros avanzados (Edad, alzada, sexo, nivel de juego/handicap, ubicación).
+    ◦ Vista de "Grilla" con fotos de alta calidad y precio.
+• **Panel de Usuario (Dashboard):** Donde el polista gestiona sus publicaciones, ve sus pagos y edita su perfil.
+• **Sección de Verificación:** Landing page que explique por qué es seguro comprar ahí (validación de identidad).
+
+**2. El Corazón del Marketplace: La Publicación**
+Un caballo de Polo no se vende como cualquier producto. La ficha técnica debe ser profesional. Cada publicación debería incluir:**CampoDescripciónTipo de Operación**Selector claro: "Venta" o "Arriendo".**Multimedia**Galería de fotos y **espacio para video** (fundamental para ver el movimiento y la boca del caballo).**Pedigree**Genealogía (Padre/Madre), si está inscrito en la AACCP u otras asociaciones.**Atributos Físicos**Edad, alzada (en manos), capa (color).**Nivel de Polo**Principiante, intermedio, profesional / Alto hándicap.**Ubicación**Zona o club donde se puede ir a probar el caballo.**Contacto Directo**Botón de WhatsApp y correo del dueño.
+
+**3. Sistema de Usuarios y Verificación**
+Para evitar estafas y perfiles falsos, el proceso de registro debe ser robusto:
+1. **Registro Básico:** Email y contraseña.
+2. **Verificación de Identidad:** * **Chile (RUT):** Integración con servicios de validación de identidad o carga de foto de cédula.
+    ◦ **Perfil Profesional:** Opción de indicar si es petisero, jugador profesional, o criador.
+3. **Seguridad:** Solo los usuarios verificados pueden publicar. Esto le da prestigio a tu página.
+
+**4. Modelo de Negocio (Monetización)**
+Mencionaste dos opciones, y ambas son válidas. Aquí te sugiero cómo implementarlas:
+• **Opción A: Pago por Publicación (Listing Fee)**
+    ◦ El usuario paga un monto fijo (ej. $10.000 CLP o $15 USD) por subir un caballo por 30 o 60 días.
+    ◦ *Ideal para:* Vendedores ocasionales.
+• **Opción B: Membresía (Suscripción)**
+    ◦ **Plan Criador:** Un pago mensual que permite tener hasta 10 caballos publicados simultáneamente.
+    ◦ *Ideal para:* Organizaciones de Polo o campos de cría.
+• **Opción C: Destacados (Upselling)**
+    ◦ Cobrar un extra para que el caballo aparezca en la página principal o en los primeros resultados de búsqueda.
