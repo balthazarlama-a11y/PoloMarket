@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { HorseCard } from "@/components/ui/horse-card";
 import { Search, ShieldCheck, Trophy, Users } from "lucide-react";
-import heroImage from "@assets/generated_images/polo_horse_running_in_a_field_at_sunset.png";
+import heroImage from "@assets/generated_images/close-up_portrait_of_a_polo_horse_head.png";
 import horse1 from "@assets/generated_images/portrait_of_a_thoroughbred_polo_pony.png";
 import horse2 from "@assets/generated_images/action_shot_of_a_polo_horse.png";
 import horse3 from "@assets/generated_images/close_up_of_a_polo_horse_head.png";
