@@ -18,7 +18,7 @@ export default function Home() {
       currency: "USD",
       image: horse1,
       location: "Buenos Aires, AR",
-      age: 7,
+      age: 8,
       height: "1.56",
       sex: "Yegua" as const,
       type: "Venta" as const,
