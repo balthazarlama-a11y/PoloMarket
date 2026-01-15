@@ -2,13 +2,18 @@ import { Navbar, Footer } from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Plus, Settings, CreditCard, Rabbit, Eye, Edit, Trash2, User, Building2, MapPin, Mail, Phone, Calendar, LogOut } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { Plus, Settings, CreditCard, Rabbit, Eye, Edit, Trash2, User, Building2, MapPin, Mail, Phone, Calendar, LogOut, Info, Dna } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import horse1 from "@assets/generated_images/portrait_of_a_thoroughbred_polo_pony.png";
 
 export default function Dashboard() {
   const [profileType, setProfileType] = useState<"personal" | "organizacion">("personal");
+  const [isPublishing, setIsPublishing] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8F9FA]">
@@ -38,9 +43,92 @@ export default function Dashboard() {
               {profileType === 'personal' ? <Building2 className="w-4 h-4 mr-2" /> : <User className="w-4 h-4 mr-2" />}
               Cambiar a {profileType === 'personal' ? 'Organización' : 'Personal'}
             </Button>
-            <Button className="h-12 bg-secondary text-white hover:bg-secondary/90 gap-2 shadow-xl px-8 rounded-xl font-bold text-xs uppercase tracking-widest">
-              <Plus className="w-4 h-4" /> Nueva Publicación
-            </Button>
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="h-12 bg-secondary text-white hover:bg-secondary/90 gap-2 shadow-xl px-8 rounded-xl font-bold text-xs uppercase tracking-widest">
+                  <Plus className="w-4 h-4" /> Nueva Publicación
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2rem] border-none shadow-2xl p-0">
+                <DialogHeader className="bg-primary p-8 text-white">
+                  <DialogTitle className="text-3xl font-serif">Publicar Caballo</DialogTitle>
+                  <DialogDescription className="text-white/70">Complete la ficha técnica y genealogía del ejemplar.</DialogDescription>
+                </DialogHeader>
+                <div className="p-8 space-y-8 bg-white">
+                  <section className="space-y-6">
+                    <div className="flex items-center gap-2 text-primary">
+                      <Info className="w-5 h-5" />
+                      <h3 className="font-bold uppercase tracking-widest text-xs">Datos Generales</h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nombre del Caballo</Label>
+                        <Input placeholder="Ej. La Dolfina Cuartetera" className="h-11 border-primary/5 bg-muted/30 rounded-xl" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Tipo de Publicación</Label>
+                        <select className="w-full h-11 border-primary/5 bg-muted/30 rounded-xl px-3 text-sm font-medium focus:ring-2 focus:ring-secondary/20 outline-none transition-all">
+                          <option>Venta Directa</option>
+                          <option>Arriendo / Temporada</option>
+                          <option>Subasta</option>
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Edad</Label>
+                        <Input type="number" placeholder="Ej. 6" className="h-11 border-primary/5 bg-muted/30 rounded-xl" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Sexo</Label>
+                        <select className="w-full h-11 border-primary/5 bg-muted/30 rounded-xl px-3 text-sm font-medium focus:ring-2 focus:ring-secondary/20 outline-none transition-all">
+                          <option>Yegua</option>
+                          <option>Padrillo</option>
+                          <option>Caballo (Castrado)</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Descripción y Logros</Label>
+                      <Textarea placeholder="Describa el temperamento, nivel de juego y premios obtenidos..." className="min-h-[100px] border-primary/5 bg-muted/30 rounded-xl" />
+                    </div>
+                  </section>
+
+                  <section className="space-y-6 pt-6 border-t border-primary/5">
+                    <div className="flex items-center gap-2 text-secondary">
+                      <Dna className="w-5 h-5" />
+                      <h3 className="font-bold uppercase tracking-widest text-xs">Genealogía (Pedigree)</h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Padre (Semental)</Label>
+                        <Input placeholder="Nombre del padre" className="h-11 border-primary/5 bg-muted/30 rounded-xl" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Madre (Yegua)</Label>
+                        <Input placeholder="Nombre de la madre" className="h-11 border-primary/5 bg-muted/30 rounded-xl" />
+                      </div>
+                    </div>
+                    <div className="bg-secondary/5 p-4 rounded-xl border border-secondary/10">
+                      <p className="text-[10px] font-medium text-secondary-foreground leading-relaxed">
+                        * La información genealógica es vital para compradores premium. Asegúrese de que los nombres coincidan con los registros oficiales.
+                      </p>
+                    </div>
+                  </section>
+
+                  <div className="flex gap-4 pt-4">
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="flex-1 h-12 rounded-xl font-bold text-[10px] uppercase tracking-widest border-primary/10">Cancelar</Button>
+                    </DialogTrigger>
+                    <Button 
+                      className="flex-[2] h-12 bg-primary text-white hover:bg-primary/90 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-xl"
+                      onClick={() => setIsPublishing(true)}
+                    >
+                      {isPublishing ? "Procesando..." : "Publicar Ahora"}
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
         
@@ -176,7 +264,6 @@ export default function Dashboard() {
                  ))}
                </TabsContent>
 
-               {/* Add Stats and Payments with same elevated style... */}
                <TabsContent value="stats">
                   <Card className="border-none shadow-2xl rounded-[3rem] bg-white p-16 text-center">
                     <div className="w-20 h-20 rounded-full bg-secondary/10 flex items-center justify-center mx-auto mb-8">
