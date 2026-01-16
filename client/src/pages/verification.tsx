@@ -4,153 +4,104 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Shield, CheckCircle, AlertCircle, ArrowRight, Upload, User, Building2 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useLocation } from "wouter";
-import { useState } from "react";
+import { Shield, CheckCircle, User, AlertCircle } from "lucide-react";
 
 export default function Verification() {
-  const [, setLocation] = useLocation();
-  const [accountType, setAccountType] = useState<"personal" | "organizacion">("personal");
-
-  const handleContinue = () => {
-    setLocation("/dashboard");
-  };
-
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8F9FA]">
+    <div className="min-h-screen flex flex-col bg-muted/20">
       <Navbar />
       
-      <main className="flex-1 py-20 container px-4 max-w-4xl mx-auto">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
-        >
-           <div className="inline-flex items-center justify-center p-4 rounded-full bg-primary/5 mb-6 border border-primary/10">
-             <Shield className="w-10 h-10 text-primary" />
+      <main className="flex-1 py-12 container px-4 max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+           <div className="inline-flex items-center justify-center p-3 rounded-full bg-primary/10 mb-4">
+             <Shield className="w-8 h-8 text-primary" />
            </div>
-           <h1 className="font-serif text-5xl font-bold text-primary mb-6">Registro de Miembro</h1>
-           <p className="text-muted-foreground max-w-xl mx-auto text-lg leading-relaxed">
-             Seleccione el tipo de cuenta y complete la información requerida para unirse a la red de polo más exclusiva.
+           <h1 className="font-serif text-4xl font-bold text-primary mb-4">Verificación de Identidad</h1>
+           <p className="text-muted-foreground max-w-lg mx-auto">
+             Para mantener la seguridad y prestigio de PoloMarket, todos los vendedores deben verificar su identidad.
+             Este proceso es rápido y seguro.
            </p>
-        </motion.div>
-
-        <div className="flex justify-center gap-4 mb-12">
-          <Button 
-            variant={accountType === "personal" ? "default" : "outline"}
-            className={`h-24 w-48 rounded-2xl flex flex-col gap-2 transition-all ${accountType === "personal" ? "shadow-xl scale-105" : "bg-white"}`}
-            onClick={() => setAccountType("personal")}
-          >
-            <User className="w-6 h-6" />
-            <span className="font-bold uppercase tracking-widest text-[10px]">Cuenta Personal</span>
-          </Button>
-          <Button 
-            variant={accountType === "organizacion" ? "default" : "outline"}
-            className={`h-24 w-48 rounded-2xl flex flex-col gap-2 transition-all ${accountType === "organizacion" ? "shadow-xl scale-105" : "bg-white"}`}
-            onClick={() => setAccountType("organizacion")}
-          >
-            <Building2 className="w-6 h-6" />
-            <span className="font-bold uppercase tracking-widest text-[10px]">Organización / Haras</span>
-          </Button>
         </div>
         
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={accountType}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Tabs defaultValue="form" className="w-full">
-              <Card className="border-none shadow-2xl rounded-3xl overflow-hidden">
-                <CardHeader className="bg-primary p-8 text-white">
-                  <CardTitle className="text-2xl font-serif">
-                    {accountType === "personal" ? "Información Personal" : "Información de la Organización"}
-                  </CardTitle>
-                  <CardDescription className="text-white/70">
-                    {accountType === "personal" 
-                      ? "Datos del jugador o profesional independiente." 
-                      : "Datos legales y comerciales de la organización o haras."}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-8 space-y-8 bg-white">
-                  {accountType === "personal" ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-3">
-                        <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Nombre</Label>
-                        <Input placeholder="Ej. Adolfo" className="h-12 border-primary/10 bg-muted/30" />
-                      </div>
-                      <div className="space-y-3">
-                        <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Apellido</Label>
-                        <Input placeholder="Ej. Cambiaso" className="h-12 border-primary/10 bg-muted/30" />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-6">
-                      <div className="space-y-3">
-                        <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Nombre de la Organización / Haras</Label>
-                        <Input placeholder="Ej. Haras La Victoria" className="h-12 border-primary/10 bg-muted/30" />
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-3">
-                          <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">RUT Empresa / Tax ID</Label>
-                          <Input placeholder="76.123.456-7" className="h-12 border-primary/10 bg-muted/30" />
-                        </div>
-                        <div className="space-y-3">
-                          <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Sitio Web</Label>
-                          <Input placeholder="www.organización.com" className="h-12 border-primary/10 bg-muted/30" />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                       <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Correo Electrónico</Label>
-                       <Input type="email" placeholder="contacto@ejemplo.com" className="h-12 border-primary/10 bg-muted/30" />
-                    </div>
-                    <div className="space-y-3">
-                       <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">WhatsApp / Teléfono</Label>
-                       <Input placeholder="+54 9 11 1234 5678" className="h-12 border-primary/10 bg-muted/30" />
-                    </div>
-                  </div>
+        <Tabs defaultValue="personal" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 h-12 mb-8">
+            <TabsTrigger value="personal" className="font-serif text-base">Información Personal</TabsTrigger>
+            <TabsTrigger value="documents" className="font-serif text-base">Documentación</TabsTrigger>
+          </TabsList>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Completa tu perfil</CardTitle>
+              <CardDescription>Esta información será validada por nuestro equipo de seguridad.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nombre</Label>
+                  <Input id="name" placeholder="Juan" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastname">Apellido</Label>
+                  <Input id="lastname" placeholder="Pérez" />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                 <Label htmlFor="email">Correo Electrónico</Label>
+                 <Input id="email" type="email" placeholder="juan@ejemplo.com" />
+              </div>
+              
+              <div className="space-y-2">
+                 <Label htmlFor="phone">Teléfono / WhatsApp</Label>
+                 <Input id="phone" placeholder="+56 9 1234 5678" />
+              </div>
+              
+               <div className="space-y-2">
+                 <Label htmlFor="role">Rol en el Polo</Label>
+                 <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
+                   <option>Jugador Amateur</option>
+                   <option>Jugador Profesional</option>
+                   <option>Criador</option>
+                   <option>Petisero / Manager</option>
+                 </select>
+              </div>
 
-                  <div className="bg-secondary/5 border border-secondary/20 p-6 rounded-2xl flex gap-4 items-start">
-                     <AlertCircle className="w-6 h-6 text-secondary mt-0.5 shrink-0" />
-                     <p className="text-sm text-secondary-foreground font-medium">
-                       La validación de cuentas de {accountType === "organizacion" ? "organización" : "personas"} requiere la carga posterior de documentos oficiales.
-                     </p>
-                  </div>
-                  
-                  <Button 
-                    className="w-full h-14 bg-primary text-white hover:bg-primary/90 text-lg font-serif group rounded-xl shadow-xl transition-all"
-                    onClick={handleContinue}
-                  >
-                    Confirmar Registro
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </CardContent>
-              </Card>
-            </Tabs>
-          </motion.div>
-        </AnimatePresence>
+              <div className="bg-blue-50 p-4 rounded-lg flex gap-3 items-start">
+                 <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
+                 <p className="text-sm text-blue-800">
+                   Tu información está protegida. Solo compartiremos tus datos de contacto con usuarios verificados que muestren interés real en tus caballos.
+                 </p>
+              </div>
+              
+              <Button className="w-full bg-primary text-white hover:bg-primary/90">
+                Guardar y Continuar
+              </Button>
+            </CardContent>
+          </Card>
+        </Tabs>
         
-        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-10">
-           {[
-             { title: "Seguridad Total", desc: "Encriptación de grado militar para sus datos." },
-             { title: "Validación Humana", desc: "Verificamos cada registro manualmente." },
-             { title: "Red Premium", desc: "Solo acceso para la elite del polo mundial." }
-           ].map((item, i) => (
-             <motion.div key={i} whileHover={{ y: -5 }} className="flex flex-col items-center text-center p-8 bg-white rounded-3xl border border-primary/5 shadow-sm">
-               <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mb-4">
-                 <CheckCircle className="w-6 h-6 text-green-600" />
-               </div>
-               <h4 className="font-bold text-primary mb-2">{item.title}</h4>
-               <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
-             </motion.div>
-           ))}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+           <div className="flex gap-4 items-start p-4 bg-white rounded-lg border">
+             <CheckCircle className="w-6 h-6 text-green-600 shrink-0" />
+             <div>
+               <h4 className="font-bold text-sm">Validación RUT/DNI</h4>
+               <p className="text-xs text-muted-foreground mt-1">Integramos servicios oficiales para validar documentos de identidad.</p>
+             </div>
+           </div>
+           <div className="flex gap-4 items-start p-4 bg-white rounded-lg border">
+             <CheckCircle className="w-6 h-6 text-green-600 shrink-0" />
+             <div>
+               <h4 className="font-bold text-sm">Historial Limpio</h4>
+               <p className="text-xs text-muted-foreground mt-1">Verificamos antecedentes en la comunidad de polo.</p>
+             </div>
+           </div>
+           <div className="flex gap-4 items-start p-4 bg-white rounded-lg border">
+             <CheckCircle className="w-6 h-6 text-green-600 shrink-0" />
+             <div>
+               <h4 className="font-bold text-sm">Pagos Seguros</h4>
+               <p className="text-xs text-muted-foreground mt-1">Tus transacciones están protegidas por pasarelas certificadas.</p>
+             </div>
+           </div>
         </div>
 
       </main>

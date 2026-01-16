@@ -70,27 +70,48 @@
   --input: 160 10% 90%;
   --ring: 164 45% 25%;
 
-  --radius: 1rem;
+  --radius: 0.25rem;
+}
+
+.dark {
+  /* Dark Luxury Palette */
+  --background: 160 30% 10%;
+  --foreground: 60 10% 90%;
+
+  --card: 160 30% 12%;
+  --card-foreground: 60 10% 90%;
+
+  --popover: 160 30% 12%;
+  --popover-foreground: 60 10% 90%;
+
+  --primary: 164 45% 35%;
+  --primary-foreground: 60 30% 96%;
+
+  --secondary: 35 45% 55%;
+  --secondary-foreground: 60 30% 96%;
+
+  --muted: 160 20% 20%;
+  --muted-foreground: 160 10% 65%;
+
+  --accent: 160 20% 18%;
+  --accent-foreground: 60 30% 96%;
+
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 160 20% 20%;
+  --input: 160 20% 20%;
+  --ring: 164 45% 35%;
 }
 
 @layer base {
   * {
-    @apply border-border selection:bg-secondary/30 selection:text-primary;
+    @apply border-border;
   }
   body {
-    @apply font-sans antialiased bg-background text-foreground selection:bg-secondary/30;
+    @apply font-sans antialiased bg-background text-foreground;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif tracking-tight;
-  }
-}
-
-@layer utilities {
-  .glass-panel {
-    @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl;
-  }
-  
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary/90 to-secondary;
+    @apply font-serif;
   }
 }
