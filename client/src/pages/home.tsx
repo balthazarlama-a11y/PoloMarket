@@ -1,7 +1,7 @@
 import { Navbar, Footer } from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { Search, ShieldCheck, Trophy, Users } from "lucide-react";
+import { Search, ShieldCheck, Trophy, Users, Instagram, Twitter, Mail, MapPin } from "lucide-react";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { HorseCard } from "@/components/ui/horse-card";
 import heroImage from "@assets/generated_images/close-up_portrait_of_a_polo_horse_head.png";
@@ -86,7 +86,7 @@ export default function Home() {
       {/* Plans Section */}
       <section id="planes" className="py-32 bg-[#F8F9FA]">
         <div className="container px-4">
-          <div className="max-w-4xl mx-auto bg-primary rounded-[4rem] overflow-hidden relative shadow-2xl border border-white/5">
+          <div className="max-w-6xl mx-auto bg-primary rounded-[4rem] overflow-hidden relative shadow-2xl border border-white/5">
             <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1598556685459-7b5610817478?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay"></div>
             <div className="relative z-10 p-12 md:p-24">
               <div className="text-center mb-20">
@@ -145,26 +145,70 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Bottom CTA */}
-      <section className="py-32 container px-4 text-center">
-        <h2 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-8 tracking-tight italic">¿Listo para unirte a la elite?</h2>
-        <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Button 
-            className="h-16 px-12 bg-secondary text-white hover:bg-secondary/90 rounded-2xl font-bold uppercase tracking-[0.2em] text-[10px] shadow-2xl transition-transform hover:scale-105"
-            onClick={() => window.location.href = '/verification'}
-          >
-            Crear Cuenta Profesional
-          </Button>
-          <Button 
-            variant="outline" 
-            className="h-16 px-12 border-primary/10 bg-white hover:bg-primary hover:text-white rounded-2xl font-bold uppercase tracking-[0.2em] text-[10px] transition-all"
-            onClick={() => {
-              const el = document.getElementById("planes");
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            Conocer Planes
-          </Button>
+      {/* Call to Action & Trust Banner */}
+      <section className="py-32 bg-white relative overflow-hidden">
+        <div className="container px-4">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-3 px-4 py-2 bg-secondary/10 rounded-full border border-secondary/20">
+                <ShieldCheck className="w-4 h-4 text-secondary" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary">Plataforma Asegurada</span>
+              </div>
+              <h2 className="text-5xl md:text-7xl font-serif font-bold text-primary leading-[1.1] tracking-tight">
+                La confianza es nuestra <span className="text-secondary italic">prioridad</span> básica.
+              </h2>
+              <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
+                En PoloMarket, cada transacción está respaldada por una verificación manual rigurosa. Conectamos a los mejores polistas con los mejores ejemplares, sin intermediarios opacos.
+              </p>
+              <div className="flex flex-wrap gap-6 pt-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center">
+                    <Trophy className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-primary">500+</div>
+                    <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Caballos Elite</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center">
+                    <Users className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-primary">1.2k</div>
+                    <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Miembros Verificados</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-tr from-secondary/20 to-transparent blur-3xl rounded-full" />
+              <div className="relative bg-primary p-12 rounded-[3.5rem] shadow-2xl border border-white/5 overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                <h3 className="text-3xl font-serif font-bold text-white mb-6">¿Listo para empezar?</h3>
+                <p className="text-white/60 mb-10 leading-relaxed">Únase a la red global de polo más importante. Publique sus ejemplares o encuentre su próximo campeón hoy mismo.</p>
+                <div className="space-y-4">
+                  <Button 
+                    className="w-full h-16 bg-secondary text-white hover:bg-secondary/90 rounded-2xl font-bold uppercase tracking-[0.2em] text-[10px] shadow-2xl transition-all hover:scale-[1.02]"
+                    onClick={() => window.location.href = '/verification'}
+                  >
+                    Crear Cuenta Profesional
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full h-16 border-white/10 bg-white/5 text-white hover:bg-white hover:text-primary rounded-2xl font-bold uppercase tracking-[0.2em] text-[10px] transition-all"
+                    onClick={() => {
+                      const el = document.getElementById("planes");
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    Ver Planes de Membresía
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
