@@ -1,5 +1,6 @@
 import { Navbar, Footer } from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -73,9 +74,11 @@ export default function Verification() {
                  </p>
               </div>
               
-              <Button className="w-full bg-primary text-white hover:bg-primary/90">
-                Guardar y Continuar
-              </Button>
+              <Link href="/dashboard">
+                <Button className="w-full bg-primary text-white hover:bg-primary/90">
+                  Guardar y Continuar
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </Tabs>

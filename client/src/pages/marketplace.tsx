@@ -1,6 +1,7 @@
 import { Navbar, Footer } from "@/components/layout/Navbar";
 import { HorseCard } from "@/components/ui/horse-card";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -99,9 +100,11 @@ export default function Marketplace() {
           <aside className="w-full md:w-64 shrink-0 space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="font-serif text-xl font-bold">Filtros</h2>
+            <Link href="/marketplace">
               <Button variant="ghost" size="sm" className="h-auto p-0 text-muted-foreground hover:text-primary">
                 Limpiar
               </Button>
+            </Link>
             </div>
             
             <Accordion type="multiple" defaultValue={["operation", "price", "location"]}>

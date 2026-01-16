@@ -101,9 +101,11 @@ export default function Home() {
                 </SelectContent>
               </Select>
             </div>
-            <Button size="lg" className="h-12 px-8 bg-primary hover:bg-primary/90 text-white font-medium">
-              <Search className="mr-2 h-4 w-4" /> Buscar
-            </Button>
+            <Link href="/marketplace">
+              <Button size="lg" className="h-12 px-8 bg-primary hover:bg-primary/90 text-white font-medium">
+                <Search className="mr-2 h-4 w-4" /> Buscar
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -137,9 +139,11 @@ export default function Home() {
               <span className="text-secondary font-medium tracking-wider text-sm uppercase">Selección del Mes</span>
               <h2 className="text-4xl font-serif font-bold text-primary mt-2">Destacados</h2>
             </div>
-            <Button variant="outline" className="hidden md:flex hover:bg-primary hover:text-white transition-colors">
-              Ver todos los caballos
-            </Button>
+            <Link href="/marketplace">
+              <Button variant="outline" className="hidden md:flex hover:bg-primary hover:text-white transition-colors">
+                Ver todos los caballos
+              </Button>
+            </Link>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -149,9 +153,11 @@ export default function Home() {
           </div>
           
            <div className="mt-12 text-center md:hidden">
-            <Button variant="outline" className="w-full">
-              Ver todos los caballos
-            </Button>
+            <Link href="/marketplace">
+              <Button variant="outline" className="w-full">
+                Ver todos los caballos
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -170,9 +176,11 @@ export default function Home() {
                      Crear Cuenta Profesional
                    </Button>
                  </Link>
-                 <Button size="lg" variant="outline" className="text-white border-white/20 hover:bg-white/10">
-                   Conocer planes
-                 </Button>
+                 <Link href="/verification">
+                   <Button size="lg" variant="outline" className="text-white border-white/20 hover:bg-white/10">
+                     Conocer planes
+                   </Button>
+                 </Link>
                </div>
              </div>
              <div className="hidden md:block">
