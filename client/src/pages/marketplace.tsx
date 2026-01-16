@@ -178,6 +178,26 @@ export default function Marketplace() {
                 </AccordionContent>
               </AccordionItem>
 
+              <AccordionItem value="level">
+                <AccordionTrigger>Nivel de Polo</AccordionTrigger>
+                <AccordionContent>
+                   <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="low" />
+                      <Label htmlFor="low">Principiante</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="mid" />
+                      <Label htmlFor="mid">Medio</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="high" />
+                      <Label htmlFor="high">Alto Handicap</Label>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
             </Accordion>
           </aside>
           

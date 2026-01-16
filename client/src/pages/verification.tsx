@@ -6,8 +6,37 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Shield, CheckCircle, User, AlertCircle } from "lucide-react";
+import { useState } from "react";
 
 export default function Verification() {
+  const [rut, setRut] = useState("");
+  const [rutError, setRutError] = useState("");
+
+  const validateRut = (rut: string) => {
+    const cleanRut = rut.replace(/\./g, "").replace(/-/g, "");
+    if (!/^[0-9]+[0-9kK]{1}$/.test(cleanRut)) return false;
+    const num = cleanRut.slice(0, -1);
+    const dv = cleanRut.slice(-1);
+    let sum = 0;
+    let mul = 2;
+    for (let i = num.length - 1; i >= 0; i--) {
+      sum += parseInt(num[i]) * mul;
+      mul = mul === 7 ? 2 : mul + 1;
+    }
+    const res = 11 - (sum % 11);
+    const calculatedDv = res === 11 ? "0" : res === 10 ? "K" : res.toString();
+    return calculatedDv.toLowerCase() === dv.toLowerCase();
+  };
+
+  const handleRutChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/[^0-9kK-]/g, "");
+    setRut(value);
+    if (value && !validateRut(value)) {
+      setRutError("RUT inválido (ej: 12345678-9)");
+    } else {
+      setRutError("");
+    }
+  };
   return (
     <div className="min-h-screen flex flex-col bg-muted/20">
       <Navbar />
@@ -47,6 +76,18 @@ export default function Verification() {
                 </div>
               </div>
               
+              <div className="space-y-2">
+                 <Label htmlFor="rut">RUT (Chile)</Label>
+                 <Input 
+                   id="rut" 
+                   placeholder="12345678-9" 
+                   value={rut}
+                   onChange={handleRutChange}
+                   className={rutError ? "border-destructive" : ""}
+                 />
+                 {rutError && <p className="text-xs text-destructive">{rutError}</p>}
+              </div>
+
               <div className="space-y-2">
                  <Label htmlFor="email">Correo Electrónico</Label>
                  <Input id="email" type="email" placeholder="juan@ejemplo.com" />

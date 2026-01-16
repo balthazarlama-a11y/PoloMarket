@@ -1,0 +1,47 @@
+Actúa como un Desarrollador Senior Full-Stack. Quiero reestructurar y construir mi aplicación de Marketplace de Caballos de Polo llamada 'Polo Market Chile'.
+
+Objetivo: Crear una base sólida, profesional y real (no solo un demo). El diseño debe ser limpio, lujoso y funcional.
+
+1. Estructura de Archivos Requerida (Hub de Archivos): Organiza el proyecto de la siguiente manera:
+
+/src/components: Componentes reutilizables (CardCaballo, Filtros, Navbar, Footer).
+
+/src/pages: Home, Marketplace, Dashboard, Verificacion.
+
+/src/context o /src/lib: Lógica de autenticación y conexión a base de datos (Supabase o Firebase recomendado para el RUT y Auth).
+
+/public/assets: Carpeta para iconos y estilos globales.
+
+2. Funcionalidades Clave por Sección:
+
+Home: Buscador dinámico con filtros de 'Venta' y 'Arriendo'. Sección de 'Destacados'.
+
+Marketplace: Sistema de grilla interactivo. Los filtros deben incluir: Edad, Alzada (manos), Sexo, Nivel de Polo (Principiante a Alto Handicap) y Ubicación.
+
+Ficha Técnica del Caballo: Cada publicación debe tener una galería de fotos/video, sección de Pedigree (Padre/Madre/Registro AACCP), atributos físicos y botón directo de contacto vía WhatsApp.
+
+Panel de Usuario: Dashboard para que los usuarios gestionen sus publicaciones y vean el estado de sus pagos.
+
+3. Sistema de Verificación y Negocio:
+
+Implementa un flujo de registro que incluya un campo para RUT (Chile) y validación de perfil (Petisero, Jugador, Criador).
+
+Estructura la lógica para tres tipos de cobro: Pago por publicación única, Suscripción mensual para criadores y un extra por 'Caballo Destacado'.
+
+4. Estilo Visual:
+
+Usa Tailwind CSS. Quiero una paleta de colores sobria (verdes oscuros, cueros, blancos rotos) que evoque el mundo del Polo.
+
+Por favor, comienza generando la estructura de carpetas y el archivo de navegación principal (App.js/Next.js) siguiendo esta arquitectura."
+
+Recomendaciones adicionales para tu proyecto
+Para que la página pase de ser un "sitemap" a una herramienta real, te sugiero considerar estos puntos técnicos que puedes pedirle a Replit más adelante:
+
+1. Base de Datos (Backend)
+Como estás en Chile y mencionas el RUT y pagos en CLP, te conviene usar Supabase. Es muy fácil de integrar con Replit y te permite manejar la base de datos de los caballos y los usuarios de forma segura.
+
+2. Gestión de Imágenes
+Los caballos de polo se venden por la vista. Asegúrate de que la IA configure una integración con Cloudinary o el mismo storage de Supabase para que las fotos no pesen tanto y la página cargue rápido en el celular (que es donde los polistas verán la web en el club).
+
+3. Validación de RUT
+Puedes pedirle a la IA específicamente: "Agrega una función de JavaScript que valide que el RUT ingresado en el registro sea chileno y tenga el dígito verificador correcto
