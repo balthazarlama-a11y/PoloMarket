@@ -8,6 +8,7 @@ import Home from "@/pages/home";
 import Marketplace from "@/pages/marketplace";
 import Verification from "@/pages/verification";
 import Dashboard from "@/pages/dashboard";
+import HorseDetail from "@/pages/horse-detail";
 
 function Router() {
   return (
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/marketplace" component={Marketplace} />
       <Route path="/verification" component={Verification} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/horse/:id" component={HorseDetail} />
       <Route component={NotFound} />
     </Switch>
   );
