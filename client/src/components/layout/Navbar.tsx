@@ -19,7 +19,7 @@ export function Navbar() {
       <div className="container flex h-16 items-center justify-between px-4">
         <Link href="/">
           <a className="font-serif text-2xl font-bold tracking-tight text-primary">
-            Polo Market Chile
+            Polo Market
           </a>
         </Link>
 
@@ -101,7 +101,7 @@ export function Footer() {
       <div className="container px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <h3 className="font-serif text-2xl font-bold">Polo Market Chile</h3>
+            <h3 className="font-serif text-2xl font-bold">Polo Market</h3>
             <p className="text-primary-foreground/80 text-sm max-w-xs">
               La plataforma líder para la comunidad del polo. Compra, venta y arriendo con seguridad garantizada.
             </p>
@@ -136,7 +136,7 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-white/10 mt-12 pt-8 text-center text-xs text-primary-foreground/50">
-          © 2024 Polo Market Chile. Todos los derechos reservados.
+          © 2024 Polo Market. Todos los derechos reservados.
         </div>
       </div>
     </footer>
