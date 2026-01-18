@@ -1,7 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertUserSchema } from "@shared/schema";
+import { insertUserSchema, insertHorseSchema } from "@shared/schema";
+import { validateRUT } from "@shared/utils";
 import bcrypt from "bcryptjs";
 
 export async function registerRoutes(
@@ -20,6 +21,18 @@ export async function registerRoutes(
         return res.status(400).json({ message: "El email ya está registrado" });
       }
 
+      // Validate RUT if provided
+      if (body.rut) {
+        if (!validateRUT(body.rut)) {
+          return res.status(400).json({ message: "RUT inválido" });
+        }
+        
+        const existingRUT = await storage.getUserByRUT(body.rut);
+        if (existingRUT) {
+          return res.status(400).json({ message: "El RUT ya está registrado" });
+        }
+      }
+
       // Hash password
       const hashedPassword = await bcrypt.hash(body.password, 10);
 
@@ -28,6 +41,8 @@ export async function registerRoutes(
         email: body.email,
         password: hashedPassword,
         name: body.name,
+        rut: body.rut,
+        role: body.role,
       });
 
       // Set session
@@ -103,6 +118,107 @@ export async function registerRoutes(
       res.json({ user: userWithoutPassword });
     } catch (error) {
       res.status(500).json({ message: "Error al obtener usuario" });
+    }
+  });
+
+  // Horse routes - require authentication
+  const requireAuth = (req: any, res: any, next: any) => {
+    if (!req.session.userId) {
+      return res.status(401).json({ message: "No autenticado" });
+    }
+    next();
+  };
+
+  // GET /api/horses - Get all horses with filters
+  app.get("/api/horses", async (req, res) => {
+    try {
+      const { userId, status, featured, limit, offset } = req.query;
+      const horses = await storage.getHorses({
+        userId: userId as string,
+        status: status as string,
+        featured: featured === "true" ? true : undefined,
+        limit: limit ? parseInt(limit as string) : undefined,
+        offset: offset ? parseInt(offset as string) : undefined,
+      });
+      res.json({ horses });
+    } catch (error) {
+      res.status(500).json({ message: "Error al obtener caballos" });
+    }
+  });
+
+  // GET /api/horses/:id - Get single horse
+  app.get("/api/horses/:id", async (req, res) => {
+    try {
+      const horse = await storage.getHorse(req.params.id);
+      if (!horse) {
+        return res.status(404).json({ message: "Caballo no encontrado" });
+      }
+      // Increment views
+      await storage.updateHorse(req.params.id, { views: (horse.views || 0) + 1 });
+      const updated = await storage.getHorse(req.params.id);
+      res.json({ horse: updated });
+    } catch (error) {
+      res.status(500).json({ message: "Error al obtener caballo" });
+    }
+  });
+
+  // POST /api/horses - Create horse (authenticated)
+  app.post("/api/horses", requireAuth, async (req, res) => {
+    try {
+      const body = insertHorseSchema.parse(req.body);
+      
+      const horse = await storage.createHorse({
+        ...body,
+        userId: req.session.userId!,
+      });
+
+      res.status(201).json({ horse });
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ message: "Datos inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error al crear caballo" });
+    }
+  });
+
+  // PUT /api/horses/:id - Update horse (authenticated, own horses only)
+  app.put("/api/horses/:id", requireAuth, async (req, res) => {
+    try {
+      const horse = await storage.getHorse(req.params.id);
+      if (!horse) {
+        return res.status(404).json({ message: "Caballo no encontrado" });
+      }
+      if (horse.userId !== req.session.userId) {
+        return res.status(403).json({ message: "No tienes permiso para editar este caballo" });
+      }
+
+      const body = insertHorseSchema.partial().parse(req.body);
+      const updated = await storage.updateHorse(req.params.id, body);
+
+      res.json({ horse: updated });
+    } catch (error: any) {
+      if (error.name === "ZodError") {
+        return res.status(400).json({ message: "Datos inválidos", errors: error.errors });
+      }
+      res.status(500).json({ message: "Error al actualizar caballo" });
+    }
+  });
+
+  // DELETE /api/horses/:id - Delete horse (authenticated, own horses only)
+  app.delete("/api/horses/:id", requireAuth, async (req, res) => {
+    try {
+      const horse = await storage.getHorse(req.params.id);
+      if (!horse) {
+        return res.status(404).json({ message: "Caballo no encontrado" });
+      }
+      if (horse.userId !== req.session.userId) {
+        return res.status(403).json({ message: "No tienes permiso para eliminar este caballo" });
+      }
+
+      await storage.deleteHorse(req.params.id);
+      res.json({ message: "Caballo eliminado" });
+    } catch (error) {
+      res.status(500).json({ message: "Error al eliminar caballo" });
     }
   });
 
