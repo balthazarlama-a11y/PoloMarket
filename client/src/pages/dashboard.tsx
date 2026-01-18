@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Plus, Settings, CreditCard, Rabbit, Eye, Edit, Trash2 } from "lucide-react";
-import horse1 from "@assets/generated_images/portrait_of_a_thoroughbred_polo_pony.png";
 
 export default function Dashboard() {
   return (
@@ -66,7 +65,9 @@ export default function Dashboard() {
                    {/* Listing Item */}
                    {[1, 2, 3, 4].map((i) => (
                      <div key={i} className="flex flex-col sm:flex-row gap-4 p-4 border rounded-lg bg-card hover:bg-accent/5 transition-colors">
-                       <img src={horse1} className="w-full sm:w-32 h-24 object-cover rounded-md" />
+                       <div className="w-full sm:w-32 h-24 bg-muted rounded-md flex items-center justify-center">
+                         <span className="text-3xl">🐴</span>
+                       </div>
                        <div className="flex-1 min-w-0">
                          <div className="flex justify-between items-start">
                            <div>

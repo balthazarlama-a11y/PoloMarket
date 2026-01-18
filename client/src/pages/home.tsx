@@ -5,10 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { HorseCard } from "@/components/ui/horse-card";
 import { Search, ShieldCheck, Trophy, Users } from "lucide-react";
-import heroImage from "@assets/generated_images/close-up_portrait_of_a_polo_horse_head.png";
-import horse1 from "@assets/generated_images/portrait_of_a_thoroughbred_polo_pony.png";
-import horse2 from "@assets/generated_images/action_shot_of_a_polo_horse.png";
-import horse3 from "@assets/generated_images/close_up_of_a_polo_horse_head.png";
 
 export default function Home() {
   const featuredHorses = [
@@ -17,7 +13,7 @@ export default function Home() {
       name: "La Dolfina Clon",
       price: "45.000",
       currency: "USD",
-      image: horse1,
+      image: null,
       location: "Buenos Aires, AR",
       age: 8,
       height: "1.56",
@@ -29,7 +25,7 @@ export default function Home() {
       name: "Ellerstina Picaro",
       price: "2.500",
       currency: "USD/mes",
-      image: horse2,
+      image: null,
       location: "Santiago, CL",
       age: 9,
       height: "1.58",
@@ -41,7 +37,7 @@ export default function Home() {
       name: "Black Pearl",
       price: "18.000",
       currency: "USD",
-      image: horse3,
+      image: null,
       location: "Pilar, AR",
       age: 6,
       height: "1.55",
@@ -55,13 +51,8 @@ export default function Home() {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-background">
         <div className="absolute inset-0 z-0">
-          <img 
-            src={heroImage} 
-            alt="Polo Match" 
-            className="w-full h-full object-cover brightness-[0.6]"
-          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         </div>
         

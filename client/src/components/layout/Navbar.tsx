@@ -1,12 +1,38 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, ShieldCheck } from "lucide-react";
+import { Menu, X, User, ShieldCheck, LogOut } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
+import { apiRequest } from "@/lib/queryClient";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
+  const queryClient = useQueryClient();
+
+  // Check if user is authenticated
+  const { data: authData } = useQuery({
+    queryKey: ["/api/auth/me"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+
+  const user = authData?.user || null;
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", "/api/auth/logout");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.setQueryData(["/api/auth/me"], null);
+    },
+  });
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
 
   const links = [
     { href: "/", label: "Inicio" },
@@ -40,17 +66,39 @@ export function Navbar() {
             </Link>
           ))}
           <div className="flex items-center gap-4 border-l pl-6 ml-2">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <User className="h-4 w-4" />
-                Mi Cuenta
-              </Button>
-            </Link>
-            <Link href="/verification">
-              <Button size="sm" className="bg-secondary hover:bg-secondary/90 text-white">
-                Publicar Caballo
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <User className="h-4 w-4" />
+                    {user.name || user.email}
+                  </Button>
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="gap-2"
+                  onClick={handleLogout}
+                  disabled={logoutMutation.isPending}
+                >
+                  <LogOut className="h-4 w-4" />
+                  Salir
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    Iniciar Sesión
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button size="sm" className="bg-primary hover:bg-primary/90 text-white">
+                    Registrarse
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
@@ -77,17 +125,38 @@ export function Navbar() {
             </Link>
           ))}
           <div className="pt-4 border-t space-y-2">
-            <Link href="/dashboard">
-              <Button variant="outline" className="w-full justify-start gap-2">
-                <User className="h-4 w-4" />
-                Mi Cuenta
-              </Button>
-            </Link>
-             <Link href="/verification">
-              <Button className="w-full bg-secondary hover:bg-secondary/90 text-white">
-                Publicar Caballo
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Link href="/dashboard">
+                  <Button variant="outline" className="w-full justify-start gap-2">
+                    <User className="h-4 w-4" />
+                    {user.name || user.email}
+                  </Button>
+                </Link>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start gap-2"
+                  onClick={handleLogout}
+                  disabled={logoutMutation.isPending}
+                >
+                  <LogOut className="h-4 w-4" />
+                  Salir
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="outline" className="w-full justify-start gap-2">
+                    Iniciar Sesión
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+                    Registrarse
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

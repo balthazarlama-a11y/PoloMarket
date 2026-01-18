@@ -3,9 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Ruler, Calendar, ShieldCheck, Heart, Share2, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link, useParams } from "wouter";
-import horse1 from "@assets/generated_images/portrait_of_a_thoroughbred_polo_pony.png";
-import horse2 from "@assets/generated_images/action_shot_of_a_polo_horse.png";
-import horse3 from "@assets/generated_images/close_up_of_a_polo_horse_head.png";
 
 export default function HorseDetail() {
   const { id } = useParams();
@@ -16,7 +13,7 @@ export default function HorseDetail() {
     name: id === "1" ? "La Dolfina Clon" : id === "2" ? "Ellerstina Picaro" : "Black Pearl",
     price: id === "1" ? "45.000" : id === "2" ? "2.500" : "18.000",
     currency: id === "2" ? "USD/mes" : "USD",
-    images: [horse1, horse2, horse3],
+    images: [null, null, null],
     location: "Buenos Aires, Argentina",
     age: 7,
     height: "1.56 m",
@@ -49,8 +46,15 @@ export default function HorseDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Left: Gallery */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-muted">
-              <img src={horse.images[0]} className="w-full h-full object-cover" />
+            <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-muted flex items-center justify-center">
+              {horse.images[0] ? (
+                <img src={horse.images[0]} className="w-full h-full object-cover" />
+              ) : (
+                <div className="text-muted-foreground text-center">
+                  <div className="text-4xl mb-2">🐴</div>
+                  <p className="text-sm">Sin imagen disponible</p>
+                </div>
+              )}
               <div className="absolute inset-y-0 left-0 flex items-center p-4">
                 <Button variant="secondary" size="icon" className="rounded-full opacity-70 hover:opacity-100">
                   <ChevronLeft />
@@ -64,8 +68,12 @@ export default function HorseDetail() {
             </div>
             <div className="grid grid-cols-3 gap-4">
               {horse.images.map((img, i) => (
-                <div key={i} className="aspect-[4/3] rounded-xl overflow-hidden border-2 border-transparent hover:border-primary cursor-pointer transition-all">
-                  <img src={img} className="w-full h-full object-cover" />
+                <div key={i} className="aspect-[4/3] rounded-xl overflow-hidden border-2 border-transparent hover:border-primary cursor-pointer transition-all bg-muted flex items-center justify-center">
+                  {img ? (
+                    <img src={img} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-2xl">🐴</span>
+                  )}
                 </div>
               ))}
             </div>

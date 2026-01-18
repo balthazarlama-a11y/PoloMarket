@@ -8,9 +8,6 @@ import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Search, SlidersHorizontal } from "lucide-react";
-import horse1 from "@assets/generated_images/portrait_of_a_thoroughbred_polo_pony.png";
-import horse2 from "@assets/generated_images/action_shot_of_a_polo_horse.png";
-import horse3 from "@assets/generated_images/close_up_of_a_polo_horse_head.png";
 
 // Mock Data duplicating for grid fill
 const horses = [
@@ -19,7 +16,7 @@ const horses = [
     name: "La Dolfina Clon",
     price: "45.000",
     currency: "USD",
-    image: horse1,
+    image: null,
     location: "Buenos Aires, AR",
     age: 7,
     height: "1.56",
@@ -31,7 +28,7 @@ const horses = [
     name: "Ellerstina Picaro",
     price: "2.500",
     currency: "USD/mes",
-    image: horse2,
+    image: null,
     location: "Santiago, CL",
     age: 9,
     height: "1.58",
@@ -43,7 +40,7 @@ const horses = [
     name: "Black Pearl",
     price: "18.000",
     currency: "USD",
-    image: horse3,
+    image: null,
     location: "Pilar, AR",
     age: 6,
     height: "1.55",
@@ -55,7 +52,7 @@ const horses = [
     name: "Gato",
     price: "12.000",
     currency: "USD",
-    image: horse3,
+    image: null,
     location: "Cañuelas, AR",
     age: 8,
     height: "1.57",
@@ -67,7 +64,7 @@ const horses = [
     name: "Luna",
     price: "22.000",
     currency: "USD",
-    image: horse1,
+    image: null,
     location: "Palm Beach, USA",
     age: 5,
     height: "1.54",
@@ -79,7 +76,7 @@ const horses = [
     name: "Relámpago",
     price: "1.800",
     currency: "USD/mes",
-    image: horse2,
+    image: null,
     location: "Santiago, CL",
     age: 10,
     height: "1.59",

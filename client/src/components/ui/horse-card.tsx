@@ -8,7 +8,7 @@ interface HorseProps {
   name: string;
   price: string;
   currency: string;
-  image: string;
+  image: string | null;
   location: string;
   age: number;
   height: string; // "1.56 m" or "15.2 hands"
@@ -21,12 +21,18 @@ export function HorseCard({ horse }: { horse: HorseProps }) {
   return (
     <Link href={`/horse/${horse.id}`}>
       <Card className="group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 border-none bg-white">
-        <div className="relative aspect-[4/3] overflow-hidden">
-          <img
-            src={horse.image}
-            alt={horse.name}
-            className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
-          />
+        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+          {horse.image ? (
+            <img
+              src={horse.image}
+              alt={horse.name}
+              className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-5xl">
+              🐴
+            </div>
+          )}
           <div className="absolute top-3 right-3">
              <button className="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white transition-colors text-white hover:text-red-500">
                <Heart className="w-4 h-4" />
