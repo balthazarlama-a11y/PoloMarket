@@ -131,7 +131,7 @@ export default function Home() {
               <h2 className="text-4xl md:text-5xl font-serif font-bold text-white">¿Eres criador o vendedor?</h2>
               <p className="text-gray-400 text-lg">Únete a la plataforma más exclusiva y llega a compradores serios. Gestiona tus publicaciones y ventas desde un panel profesional.</p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link href="/verification">
+                <Link href="/register-business">
                   <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-white border-none">
                     Crear Cuenta Profesional
                   </Button>

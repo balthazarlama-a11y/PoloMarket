@@ -11,6 +11,7 @@ import Dashboard from "@/pages/dashboard";
 import HorseDetail from "@/pages/horse-detail";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
+import RegisterBusiness from "@/pages/register-business";
 
 function Router() {
   return (
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/horse/:id" component={HorseDetail} />
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
+      <Route path="/register-business" component={RegisterBusiness} />
       <Route component={NotFound} />
     </Switch>
   );
