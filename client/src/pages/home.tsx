@@ -43,8 +43,9 @@ export default function Home() {
                   <SelectValue placeholder="Tipo de Operación" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="sale">Compra</SelectItem>
+                  <SelectItem value="buy">Compra</SelectItem>
                   <SelectItem value="rent">Arriendo</SelectItem>
+                  <SelectItem value="sale">Venta</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -38,12 +38,16 @@ export default function Marketplace() {
                 <AccordionContent>
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="sale" />
-                      <Label htmlFor="sale">Venta</Label>
+                      <Checkbox id="buy" />
+                      <Label htmlFor="buy">Compra</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Checkbox id="rent" />
                       <Label htmlFor="rent">Arriendo</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="sale" />
+                      <Label htmlFor="sale">Venta</Label>
                     </div>
                   </div>
                 </AccordionContent>
