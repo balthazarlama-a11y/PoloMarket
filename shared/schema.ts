@@ -61,29 +61,29 @@ export const horses = pgTable("horses", {
   name: text("name").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   currency: text("currency").default("USD"),
-  
+
   // Basic info
   age: integer("age").notNull(),
   height: text("height").notNull(), // in hands (e.g., "15.2")
   sex: text("sex").notNull(), // Yegua, Castrado, Padrillo
   type: text("type").notNull(), // Venta, Arriendo
   location: text("location").notNull(),
-  
+
   // Technical details
   description: text("description"),
   pedigree: jsonb("pedigree"), // { padre: string, madre: string, abuelo?: string }
   aaccpRegistry: text("aaccp_registry"), // AACCP registration number
   poloLevel: text("polo_level"), // Principiante, Intermedio, Alto handicap
-  
+
   // Multimedia
   images: jsonb("images"), // Array of image URLs
   videoUrl: text("video_url"), // YouTube/Vimeo link
-  
+
   // Plan and status
   planId: varchar("plan_id").references(() => plans.id),
   status: text("status").default("active"), // active, sold, expired, pending_payment
   featured: boolean("featured").default(false),
-  
+
   // Metadata
   views: integer("views").default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -96,7 +96,7 @@ export const insertHorseSchema = createInsertSchema(horses, {
   age: z.number().int().min(0).max(30),
   height: z.string().min(1),
   sex: z.enum(["Yegua", "Castrado", "Padrillo"]),
-  type: z.enum(["Venta", "Arriendo"]),
+  type: z.enum(["Venta", "Arriendo", "Compra"]),
   location: z.string().min(1),
   poloLevel: z.enum(["Principiante", "Intermedio", "Alto handicap"]).optional(),
   pedigree: z.object({

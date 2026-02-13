@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, ShieldCheck, LogOut } from "lucide-react";
-import { useState } from "react";
+import { Menu, X, User, LogOut, ChevronDown } from "lucide-react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
@@ -9,10 +9,16 @@ import { apiRequest } from "@/lib/queryClient";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [location] = useLocation();
   const queryClient = useQueryClient();
 
-  // Check if user is authenticated
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const { data: authData } = useQuery({
     queryKey: ["/api/auth/me"],
     queryFn: getQueryFn({ on401: "returnNull" }),
@@ -40,60 +46,77 @@ export function Navbar() {
     { href: "/verification", label: "Verificación" },
   ];
 
+  const getInitials = (name?: string, email?: string) => {
+    if (name) return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+    if (email) return email[0].toUpperCase();
+    return "U";
+  };
+
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className={cn(
+      "sticky top-0 z-50 w-full transition-all duration-300",
+      scrolled
+        ? "bg-background/95 backdrop-blur-lg shadow-sm border-b border-border/50"
+        : "bg-background/80 backdrop-blur border-b border-border/30"
+    )}>
       <div className="container flex h-16 items-center justify-between px-4">
         <Link href="/">
-          <a className="font-serif text-2xl font-bold tracking-tight text-primary">
-            Polo Market
+          <a className="flex items-center gap-2 group">
+            <span className="font-serif text-2xl font-bold tracking-tight text-primary group-hover:text-secondary transition-colors duration-300">
+              Polo Market
+            </span>
           </a>
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex md:items-center md:gap-8">
+        <div className="hidden md:flex md:items-center md:gap-1">
           {links.map((link) => (
             <Link key={link.href} href={link.href}>
               <a
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary",
+                  "relative px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-accent",
                   location === link.href
                     ? "text-primary font-semibold"
-                    : "text-muted-foreground"
+                    : "text-muted-foreground hover:text-primary"
                 )}
               >
                 {link.label}
+                {location === link.href && (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-secondary rounded-full" />
+                )}
               </a>
             </Link>
           ))}
-          <div className="flex items-center gap-4 border-l pl-6 ml-2">
+          <div className="flex items-center gap-3 border-l border-border/50 pl-6 ml-4">
             {user ? (
               <>
                 <Link href="/dashboard">
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    <User className="h-4 w-4" />
-                    {user.name || user.email}
+                  <Button variant="ghost" size="sm" className="gap-2 hover:bg-accent rounded-lg">
+                    <div className="w-7 h-7 rounded-full bg-secondary/20 flex items-center justify-center text-xs font-bold text-secondary">
+                      {getInitials(user.name, user.email)}
+                    </div>
+                    <span className="max-w-[120px] truncate">{user.name || user.email}</span>
                   </Button>
                 </Link>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="gap-2"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 text-muted-foreground hover:text-destructive rounded-lg"
                   onClick={handleLogout}
                   disabled={logoutMutation.isPending}
                 >
                   <LogOut className="h-4 w-4" />
-                  Salir
                 </Button>
               </>
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="gap-2">
+                  <Button variant="ghost" size="sm" className="gap-2 rounded-lg text-muted-foreground hover:text-primary">
                     Iniciar Sesión
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="sm" className="bg-primary hover:bg-primary/90 text-white">
+                  <Button size="sm" className="bg-primary hover:bg-primary/90 text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
                     Registrarse
                   </Button>
                 </Link>
@@ -104,54 +127,66 @@ export function Navbar() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden p-2"
+          className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors"
           onClick={() => setIsOpen(!isOpen)}
         >
-          {isOpen ? <X /> : <Menu />}
+          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
-      {/* Mobile Nav */}
-      {isOpen && (
-        <div className="md:hidden border-b bg-background p-4 space-y-4">
+      {/* Mobile Nav — Animated */}
+      <div
+        className={cn(
+          "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
+          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        )}
+      >
+        <div className="border-t border-border/50 bg-background p-4 space-y-1">
           {links.map((link) => (
             <Link key={link.href} href={link.href}>
               <a
-                className="block py-2 text-sm font-medium hover:text-primary"
+                className={cn(
+                  "block py-3 px-4 text-sm font-medium rounded-lg transition-colors",
+                  location === link.href
+                    ? "bg-primary/5 text-primary font-semibold border-l-2 border-secondary"
+                    : "text-muted-foreground hover:text-primary hover:bg-accent"
+                )}
                 onClick={() => setIsOpen(false)}
               >
                 {link.label}
               </a>
             </Link>
           ))}
-          <div className="pt-4 border-t space-y-2">
+          <div className="pt-3 border-t border-border/50 space-y-2">
             {user ? (
               <>
                 <Link href="/dashboard">
-                  <Button variant="outline" className="w-full justify-start gap-2">
-                    <User className="h-4 w-4" />
+                  <Button variant="outline" className="w-full justify-start gap-3 rounded-lg h-11" onClick={() => setIsOpen(false)}>
+                    <div className="w-7 h-7 rounded-full bg-secondary/20 flex items-center justify-center text-xs font-bold text-secondary">
+                      {getInitials(user.name, user.email)}
+                    </div>
                     {user.name || user.email}
                   </Button>
                 </Link>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start gap-2"
-                  onClick={handleLogout}
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive rounded-lg"
+                  onClick={() => { handleLogout(); setIsOpen(false); }}
                   disabled={logoutMutation.isPending}
                 >
                   <LogOut className="h-4 w-4" />
-                  Salir
+                  Cerrar Sesión
                 </Button>
               </>
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="outline" className="w-full justify-start gap-2">
+                  <Button variant="outline" className="w-full rounded-lg h-11" onClick={() => setIsOpen(false)}>
                     Iniciar Sesión
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-white">
+                  <Button className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg h-11" onClick={() => setIsOpen(false)}>
                     Registrarse
                   </Button>
                 </Link>
@@ -159,53 +194,76 @@ export function Navbar() {
             )}
           </div>
         </div>
-      )}
+      </div>
     </nav>
   );
 }
 
 export function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-primary text-primary-foreground py-12">
-      <div className="container px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="space-y-4">
+    <footer className="bg-primary text-primary-foreground">
+      {/* Main Footer */}
+      <div className="container px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div className="space-y-4 md:col-span-1">
             <h3 className="font-serif text-2xl font-bold">Polo Market</h3>
-            <p className="text-primary-foreground/80 text-sm max-w-xs">
-              La plataforma líder para la comunidad del polo. Compra, venta y arriendo con seguridad garantizada.
+            <p className="text-primary-foreground/70 text-sm leading-relaxed max-w-xs">
+              La plataforma líder para la comunidad del polo. Compra, venta y arriendo de caballos con seguridad garantizada.
             </p>
+            <div className="flex gap-3 pt-2">
+              <a href="#" className="w-9 h-9 rounded-full bg-white/10 hover:bg-secondary/80 flex items-center justify-center text-xs font-bold transition-all duration-300 hover:scale-110">
+                IG
+              </a>
+              <a href="#" className="w-9 h-9 rounded-full bg-white/10 hover:bg-secondary/80 flex items-center justify-center text-xs font-bold transition-all duration-300 hover:scale-110">
+                FB
+              </a>
+              <a href="#" className="w-9 h-9 rounded-full bg-white/10 hover:bg-secondary/80 flex items-center justify-center text-xs font-bold transition-all duration-300 hover:scale-110">
+                WA
+              </a>
+            </div>
           </div>
-          
+
           <div>
-            <h4 className="font-semibold mb-4">Marketplace</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/70">
-              <li><Link href="/marketplace?type=sale">Venta</Link></li>
-              <li><Link href="/marketplace?type=rent">Arriendo</Link></li>
-              <li><Link href="/marketplace?sort=featured">Destacados</Link></li>
+            <h4 className="font-semibold mb-5 text-sm uppercase tracking-wider text-primary-foreground/90">Marketplace</h4>
+            <ul className="space-y-3 text-sm text-primary-foreground/60">
+              <li><Link href="/marketplace?type=buy" className="hover:text-secondary transition-colors">Compra</Link></li>
+              <li><Link href="/marketplace?type=sale" className="hover:text-secondary transition-colors">Venta</Link></li>
+              <li><Link href="/marketplace?type=rent" className="hover:text-secondary transition-colors">Arriendo</Link></li>
+              <li><Link href="/marketplace?sort=featured" className="hover:text-secondary transition-colors">Destacados</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Comunidad</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/70">
-              <li><Link href="/verification">Verificación de Identidad</Link></li>
-              <li><Link href="#">Cómo funciona</Link></li>
-              <li><Link href="#">Términos y Condiciones</Link></li>
+            <h4 className="font-semibold mb-5 text-sm uppercase tracking-wider text-primary-foreground/90">Comunidad</h4>
+            <ul className="space-y-3 text-sm text-primary-foreground/60">
+              <li><Link href="/verification" className="hover:text-secondary transition-colors">Verificación de Identidad</Link></li>
+              <li><Link href="/register-business" className="hover:text-secondary transition-colors">Cuenta Empresarial</Link></li>
+              <li><Link href="#" className="hover:text-secondary transition-colors">Cómo funciona</Link></li>
+              <li><Link href="#" className="hover:text-secondary transition-colors">Términos y Condiciones</Link></li>
             </ul>
           </div>
 
           <div>
-             <h4 className="font-semibold mb-4">Contacto</h4>
-             <p className="text-sm text-primary-foreground/70 mb-2">soporte@polomarket.com</p>
-             <div className="flex gap-4 mt-4">
-               {/* Social placeholders */}
-               <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">IG</div>
-               <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">FB</div>
-             </div>
+            <h4 className="font-semibold mb-5 text-sm uppercase tracking-wider text-primary-foreground/90">Contacto</h4>
+            <p className="text-sm text-primary-foreground/60 mb-3">soporte@polomarket.com</p>
+            <p className="text-sm text-primary-foreground/60 mb-4">+56 2 2345 6789</p>
           </div>
         </div>
-        <div className="border-t border-white/10 mt-12 pt-8 text-center text-xs text-primary-foreground/50">
-          © 2024 Polo Market. Todos los derechos reservados.
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-white/10">
+        <div className="container px-4 py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-primary-foreground/40">
+            © {currentYear} Polo Market. Todos los derechos reservados.
+          </p>
+          <div className="flex gap-6 text-xs text-primary-foreground/40">
+            <a href="#" className="hover:text-secondary transition-colors">Privacidad</a>
+            <a href="#" className="hover:text-secondary transition-colors">Términos</a>
+            <a href="#" className="hover:text-secondary transition-colors">Cookies</a>
+          </div>
         </div>
       </div>
     </footer>

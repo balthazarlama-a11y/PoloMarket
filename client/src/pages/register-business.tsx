@@ -1,11 +1,11 @@
 import { Navbar, Footer } from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "wouter";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Building2, Mail, Lock, User, MapPin, Phone, FileText } from "lucide-react";
+import { Building2, Mail, Lock, User, MapPin, Phone, FileText, ArrowRight, ShieldCheck, BarChart3, Globe } from "lucide-react";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -71,65 +71,81 @@ export default function RegisterBusiness() {
         <div className="min-h-screen flex flex-col bg-muted/20">
             <Navbar />
 
-            <main className="flex-1 flex items-center justify-center py-12 container px-4">
-                <Card className="w-full max-w-2xl">
-                    <CardHeader className="space-y-1 text-center">
-                        <div className="inline-flex items-center justify-center p-3 rounded-full bg-secondary/10 mb-4 mx-auto">
-                            <Building2 className="w-8 h-8 text-secondary" />
-                        </div>
-                        <CardTitle className="font-serif text-3xl font-bold">Cuenta de Empresa</CardTitle>
-                        <CardDescription>
-                            Registra tu empresa y empieza a publicar caballos de polo en nuestra plataforma
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Hero Banner */}
+            <div className="bg-gradient-to-br from-primary to-primary/85 py-16 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1598556685459-7b5610817478?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center" />
+                <div className="relative z-10 container px-4 text-center">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur mb-6">
+                        <Building2 className="w-8 h-8 text-white" />
+                    </div>
+                    <h1 className="font-serif text-3xl md:text-5xl font-bold text-white mb-4">Cuenta de Empresa</h1>
+                    <p className="text-white/60 text-lg max-w-xl mx-auto">
+                        Registra tu empresa y empieza a publicar caballos en la plataforma más exclusiva de polo
+                    </p>
+                </div>
+            </div>
+
+            {/* Benefits */}
+            <div className="container px-4 -mt-8 relative z-20 mb-12">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                        { icon: ShieldCheck, title: "Perfil Verificado", desc: "Badge de empresa verificada en tus publicaciones" },
+                        { icon: BarChart3, title: "Analíticas Avanzadas", desc: "Métricas detalladas de rendimiento" },
+                        { icon: Globe, title: "Alcance Global", desc: "Visibilidad en 12+ países del mundo" },
+                    ].map((item, i) => (
+                        <Card key={i} className="border-border/50 premium-shadow">
+                            <CardContent className="p-6 flex items-start gap-4">
+                                <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                                    <item.icon className="w-5 h-5 text-secondary" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-sm text-primary">{item.title}</h3>
+                                    <p className="text-xs text-muted-foreground mt-1">{item.desc}</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+
+            {/* Form */}
+            <main className="container px-4 pb-16 max-w-3xl mx-auto">
+                <Card className="border-border/50 premium-shadow-lg">
+                    <CardContent className="p-8 md:p-10">
+                        <form onSubmit={handleSubmit} className="space-y-8">
                             {error && (
-                                <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
+                                <div className="p-4 rounded-xl bg-destructive/10 text-destructive text-sm border border-destructive/20 animate-fade-in">
                                     {error}
                                 </div>
                             )}
 
-                            {/* Datos de la Empresa */}
+                            {/* Company Data */}
                             <div>
-                                <h3 className="font-serif text-lg font-semibold mb-4 text-primary border-b pb-2">Datos de la Empresa</h3>
+                                <h3 className="font-serif text-lg font-bold text-primary mb-5 flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                        <Building2 className="w-4 h-4 text-primary" />
+                                    </div>
+                                    Datos de la Empresa
+                                </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="companyName">Nombre de la Empresa *</Label>
-                                        <div className="relative">
-                                            <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                            <Input
-                                                id="companyName"
-                                                type="text"
-                                                placeholder="Haras del Sur S.A."
-                                                value={companyName}
-                                                onChange={(e) => setCompanyName(e.target.value)}
-                                                className="pl-10"
-                                                required
-                                            />
+                                        <Label htmlFor="companyName" className="text-sm font-medium">Nombre de la Empresa *</Label>
+                                        <div className="relative gold-glow rounded-xl">
+                                            <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input id="companyName" type="text" placeholder="Haras del Sur S.A." value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="pl-11 h-12 rounded-xl border-border/60" required />
                                         </div>
                                     </div>
-
                                     <div className="space-y-2">
-                                        <Label htmlFor="rut">RUT / ID Fiscal *</Label>
-                                        <div className="relative">
-                                            <FileText className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                            <Input
-                                                id="rut"
-                                                type="text"
-                                                placeholder="76.123.456-7"
-                                                value={rut}
-                                                onChange={(e) => setRut(e.target.value)}
-                                                className="pl-10"
-                                                required
-                                            />
+                                        <Label htmlFor="rut" className="text-sm font-medium">RUT / ID Fiscal *</Label>
+                                        <div className="relative gold-glow rounded-xl">
+                                            <FileText className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input id="rut" type="text" placeholder="76.123.456-7" value={rut} onChange={(e) => setRut(e.target.value)} className="pl-11 h-12 rounded-xl border-border/60" required />
                                         </div>
                                     </div>
-
                                     <div className="space-y-2 md:col-span-2">
-                                        <Label htmlFor="businessType">Tipo de Negocio *</Label>
+                                        <Label htmlFor="businessType" className="text-sm font-medium">Tipo de Negocio *</Label>
                                         <Select value={businessType} onValueChange={setBusinessType}>
-                                            <SelectTrigger className="h-10">
+                                            <SelectTrigger className="h-12 rounded-xl border-border/60">
                                                 <SelectValue placeholder="Selecciona el tipo de negocio" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -145,62 +161,40 @@ export default function RegisterBusiness() {
                                 </div>
                             </div>
 
-                            {/* Datos de Contacto */}
+                            {/* Contact Data */}
                             <div>
-                                <h3 className="font-serif text-lg font-semibold mb-4 text-primary border-b pb-2">Datos de Contacto</h3>
+                                <h3 className="font-serif text-lg font-bold text-primary mb-5 flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                        <User className="w-4 h-4 text-primary" />
+                                    </div>
+                                    Datos de Contacto
+                                </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="contactName">Nombre del Representante *</Label>
-                                        <div className="relative">
-                                            <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                            <Input
-                                                id="contactName"
-                                                type="text"
-                                                placeholder="Juan Pérez"
-                                                value={contactName}
-                                                onChange={(e) => setContactName(e.target.value)}
-                                                className="pl-10"
-                                                required
-                                            />
+                                        <Label htmlFor="contactName" className="text-sm font-medium">Representante *</Label>
+                                        <div className="relative gold-glow rounded-xl">
+                                            <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input id="contactName" type="text" placeholder="Juan Pérez" value={contactName} onChange={(e) => setContactName(e.target.value)} className="pl-11 h-12 rounded-xl border-border/60" required />
                                         </div>
                                     </div>
-
                                     <div className="space-y-2">
-                                        <Label htmlFor="email">Email Corporativo *</Label>
-                                        <div className="relative">
-                                            <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                            <Input
-                                                id="email"
-                                                type="email"
-                                                placeholder="contacto@empresa.com"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                className="pl-10"
-                                                required
-                                            />
+                                        <Label htmlFor="email" className="text-sm font-medium">Email Corporativo *</Label>
+                                        <div className="relative gold-glow rounded-xl">
+                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input id="email" type="email" placeholder="contacto@empresa.com" value={email} onChange={(e) => setEmail(e.target.value)} className="pl-11 h-12 rounded-xl border-border/60" required />
                                         </div>
                                     </div>
-
                                     <div className="space-y-2">
-                                        <Label htmlFor="phone">Teléfono *</Label>
-                                        <div className="relative">
-                                            <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                            <Input
-                                                id="phone"
-                                                type="tel"
-                                                placeholder="+56 9 1234 5678"
-                                                value={phone}
-                                                onChange={(e) => setPhone(e.target.value)}
-                                                className="pl-10"
-                                                required
-                                            />
+                                        <Label htmlFor="phone" className="text-sm font-medium">Teléfono *</Label>
+                                        <div className="relative gold-glow rounded-xl">
+                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input id="phone" type="tel" placeholder="+56 9 1234 5678" value={phone} onChange={(e) => setPhone(e.target.value)} className="pl-11 h-12 rounded-xl border-border/60" required />
                                         </div>
                                     </div>
-
                                     <div className="space-y-2">
-                                        <Label htmlFor="country">País *</Label>
+                                        <Label htmlFor="country" className="text-sm font-medium">País *</Label>
                                         <Select value={country} onValueChange={setCountry}>
-                                            <SelectTrigger className="h-10">
+                                            <SelectTrigger className="h-12 rounded-xl border-border/60">
                                                 <SelectValue placeholder="Selecciona tu país" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -214,88 +208,64 @@ export default function RegisterBusiness() {
                                             </SelectContent>
                                         </Select>
                                     </div>
-
                                     <div className="space-y-2 md:col-span-2">
-                                        <Label htmlFor="city">Ciudad</Label>
-                                        <div className="relative">
-                                            <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                            <Input
-                                                id="city"
-                                                type="text"
-                                                placeholder="Santiago"
-                                                value={city}
-                                                onChange={(e) => setCity(e.target.value)}
-                                                className="pl-10"
-                                            />
+                                        <Label htmlFor="city" className="text-sm font-medium">Ciudad</Label>
+                                        <div className="relative gold-glow rounded-xl">
+                                            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input id="city" type="text" placeholder="Santiago" value={city} onChange={(e) => setCity(e.target.value)} className="pl-11 h-12 rounded-xl border-border/60" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Seguridad */}
+                            {/* Security */}
                             <div>
-                                <h3 className="font-serif text-lg font-semibold mb-4 text-primary border-b pb-2">Seguridad</h3>
+                                <h3 className="font-serif text-lg font-bold text-primary mb-5 flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                                        <Lock className="w-4 h-4 text-primary" />
+                                    </div>
+                                    Seguridad
+                                </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="password">Contraseña *</Label>
-                                        <div className="relative">
-                                            <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                            <Input
-                                                id="password"
-                                                type="password"
-                                                placeholder="••••••••"
-                                                value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                                className="pl-10"
-                                                required
-                                                minLength={6}
-                                            />
+                                        <Label htmlFor="password" className="text-sm font-medium">Contraseña *</Label>
+                                        <div className="relative gold-glow rounded-xl">
+                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-11 h-12 rounded-xl border-border/60" required minLength={6} />
                                         </div>
                                     </div>
-
                                     <div className="space-y-2">
-                                        <Label htmlFor="confirmPassword">Confirmar Contraseña *</Label>
-                                        <div className="relative">
-                                            <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                            <Input
-                                                id="confirmPassword"
-                                                type="password"
-                                                placeholder="••••••••"
-                                                value={confirmPassword}
-                                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                                className="pl-10"
-                                                required
-                                                minLength={6}
-                                            />
+                                        <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirmar *</Label>
+                                        <div className="relative gold-glow rounded-xl">
+                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                            <Input id="confirmPassword" type="password" placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="pl-11 h-12 rounded-xl border-border/60" required minLength={6} />
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-muted/50 rounded-lg p-4 text-sm text-muted-foreground">
-                                <p>Al crear una cuenta de empresa, aceptas nuestros términos de servicio y confirmas que los datos proporcionados son verídicos. Tu cuenta será verificada por nuestro equipo en un plazo de 24-48 horas.</p>
+                            <div className="bg-muted/50 rounded-xl p-5 text-sm text-muted-foreground border border-border/30">
+                                Al crear una cuenta de empresa, aceptas nuestros términos de servicio y confirmas que los datos proporcionados son verídicos. Tu cuenta será verificada en un plazo de 24-48 horas.
                             </div>
 
                             <Button
                                 type="submit"
-                                className="w-full bg-secondary hover:bg-secondary/90 text-white text-lg h-12"
+                                className="w-full bg-secondary hover:bg-secondary/90 text-white text-lg h-14 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 gap-2 font-semibold"
                                 disabled={registerMutation.isPending}
                             >
-                                {registerMutation.isPending ? "Creando cuenta..." : "Crear Cuenta de Empresa"}
+                                {registerMutation.isPending ? "Creando cuenta..." : (
+                                    <>Crear Cuenta de Empresa <ArrowRight className="w-5 h-5" /></>
+                                )}
                             </Button>
 
-                            <div className="text-center text-sm text-muted-foreground space-y-1">
+                            <div className="text-center text-sm text-muted-foreground space-y-2">
                                 <p>
                                     ¿Ya tienes cuenta?{" "}
-                                    <Link href="/login">
-                                        <a className="text-primary hover:underline font-medium">Inicia sesión</a>
-                                    </Link>
+                                    <Link href="/login"><a className="text-secondary hover:underline font-semibold">Inicia sesión</a></Link>
                                 </p>
                                 <p>
                                     ¿Buscas una cuenta personal?{" "}
-                                    <Link href="/register">
-                                        <a className="text-primary hover:underline font-medium">Regístrate aquí</a>
-                                    </Link>
+                                    <Link href="/register"><a className="text-primary hover:underline font-medium">Regístrate aquí</a></Link>
                                 </p>
                             </div>
                         </form>

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -41,9 +43,9 @@
 }
 
 :root {
-  /* Hunter Green & Gold Palette */
-  --background: 60 10% 98%; /* Soft Cream */
-  --foreground: 160 30% 15%; /* Deep Green Black */
+  /* Hunter Green & Gold Palette — Premium */
+  --background: 60 10% 98%;
+  --foreground: 160 30% 15%;
 
   --card: 0 0% 100%;
   --card-foreground: 160 30% 15%;
@@ -51,59 +53,59 @@
   --popover: 0 0% 100%;
   --popover-foreground: 160 30% 15%;
 
-  --primary: 164 45% 25%; /* Deep Polo Green */
+  --primary: 164 45% 22%;
   --primary-foreground: 60 30% 96%;
 
-  --secondary: 35 45% 55%; /* Saddle Leather / Gold */
+  --secondary: 35 55% 52%;
   --secondary-foreground: 60 30% 96%;
 
-  --muted: 60 10% 92%;
+  --muted: 60 10% 93%;
   --muted-foreground: 160 10% 45%;
 
   --accent: 60 15% 94%;
-  --accent-foreground: 160 45% 25%;
+  --accent-foreground: 164 45% 22%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
 
   --border: 160 10% 90%;
-  --input: 160 10% 90%;
-  --ring: 164 45% 25%;
+  --input: 160 10% 88%;
+  --ring: 164 45% 22%;
 
-  --radius: 0.25rem;
+  --radius: 0.5rem;
 }
 
 .dark {
-  /* Dark Luxury Palette */
-  --background: 160 30% 10%;
-  --foreground: 60 10% 90%;
+  --background: 160 30% 8%;
+  --foreground: 60 10% 92%;
 
-  --card: 160 30% 12%;
-  --card-foreground: 60 10% 90%;
+  --card: 160 30% 10%;
+  --card-foreground: 60 10% 92%;
 
-  --popover: 160 30% 12%;
-  --popover-foreground: 60 10% 90%;
+  --popover: 160 30% 10%;
+  --popover-foreground: 60 10% 92%;
 
   --primary: 164 45% 35%;
   --primary-foreground: 60 30% 96%;
 
-  --secondary: 35 45% 55%;
+  --secondary: 35 50% 55%;
   --secondary-foreground: 60 30% 96%;
 
-  --muted: 160 20% 20%;
+  --muted: 160 20% 18%;
   --muted-foreground: 160 10% 65%;
 
-  --accent: 160 20% 18%;
+  --accent: 160 20% 16%;
   --accent-foreground: 60 30% 96%;
 
   --destructive: 0 62% 30%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 160 20% 20%;
-  --input: 160 20% 20%;
+  --border: 160 20% 18%;
+  --input: 160 20% 18%;
   --ring: 164 45% 35%;
 }
 
+/* ========= Global Base ========= */
 @layer base {
   * {
     @apply border-border;
@@ -114,4 +116,117 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif;
   }
+}
+
+/* ========= Premium Animations ========= */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 hsla(35, 55%, 52%, 0.3); }
+  50% { box-shadow: 0 0 0 8px hsla(35, 55%, 52%, 0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+/* ========= Premium Utility Classes ========= */
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.premium-shadow {
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 10px 15px -3px rgba(0, 0, 0, 0.05),
+    0 20px 25px -5px rgba(0, 0, 0, 0.03);
+}
+
+.premium-shadow-lg {
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.08),
+    0 20px 25px -5px rgba(0, 0, 0, 0.05),
+    0 40px 50px -12px rgba(0, 0, 0, 0.04);
+}
+
+.gold-border {
+  border: 1px solid hsla(35, 55%, 52%, 0.3);
+}
+
+.gold-glow:focus-within {
+  box-shadow: 0 0 0 3px hsla(35, 55%, 52%, 0.15);
+  border-color: hsl(35, 55%, 52%);
+}
+
+/* ========= Smooth Transitions ========= */
+input, textarea, select, button {
+  transition: all 0.2s ease;
+}
+
+a {
+  transition: color 0.2s ease;
+}
+
+/* ========= Scrollbar Styling ========= */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(60 10% 95%);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(160 10% 75%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(160 10% 60%);
 }

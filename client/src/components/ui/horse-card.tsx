@@ -13,38 +13,44 @@ interface HorseProps {
   age: number;
   height: string; // "1.56 m" or "15.2 hands"
   sex: "Mare" | "Gelding" | "Stallion" | "Yegua" | "Castrado" | "Padrillo";
-  type: "Venta" | "Arriendo";
+  type: "Venta" | "Arriendo" | "Compra";
   tags?: string[];
 }
 
 export function HorseCard({ horse }: { horse: HorseProps }) {
+  const badgeClass = horse.type === "Venta"
+    ? "bg-primary text-white"
+    : horse.type === "Compra"
+      ? "bg-emerald-600 text-white"
+      : "bg-secondary text-white";
+
   return (
     <Link href={`/horse/${horse.id}`}>
-      <Card className="group overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 border-none bg-white">
+      <Card className="group overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-500 border border-border/50 bg-white hover:-translate-y-1">
         <div className="relative aspect-[4/3] overflow-hidden bg-muted">
           {horse.image ? (
             <img
               src={horse.image}
               alt={horse.name}
-              className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+              className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-5xl">
+            <div className="w-full h-full flex items-center justify-center text-5xl bg-gradient-to-br from-muted to-muted/50">
               🐴
             </div>
           )}
           <div className="absolute top-3 right-3">
-             <button className="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white transition-colors text-white hover:text-red-500">
-               <Heart className="w-4 h-4" />
-             </button>
+            <button className="p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white transition-all duration-300 text-white hover:text-red-500 hover:scale-110">
+              <Heart className="w-4 h-4" />
+            </button>
           </div>
           <div className="absolute top-3 left-3">
-            <Badge variant={horse.type === "Venta" ? "default" : "secondary"} className="uppercase tracking-wide text-[10px] font-bold">
+            <Badge className={`uppercase tracking-wide text-[10px] font-bold ${badgeClass}`}>
               {horse.type}
             </Badge>
           </div>
         </div>
-        
+
         <CardContent className="p-5">
           <div className="flex justify-between items-start mb-2">
             <div>
@@ -57,7 +63,7 @@ export function HorseCard({ horse }: { horse: HorseProps }) {
               </div>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-3 gap-2 py-3 border-y border-border/50 my-3">
             <div className="text-center">
               <span className="block text-[10px] uppercase text-muted-foreground tracking-wider">Edad</span>
@@ -73,7 +79,7 @@ export function HorseCard({ horse }: { horse: HorseProps }) {
             </div>
           </div>
         </CardContent>
-        
+
         <CardFooter className="px-5 pb-5 pt-0 flex justify-between items-center">
           <div className="font-serif text-lg font-bold text-primary">
             {horse.currency} {horse.price}
