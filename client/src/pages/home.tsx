@@ -4,7 +4,7 @@ import { Link } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { HorseCard } from "@/components/ui/horse-card";
-import { Search, ShieldCheck, Trophy, Users, ArrowRight } from "lucide-react";
+import { Search, ShieldCheck, Trophy, Users, ArrowRight, Truck, Wheat, Stethoscope } from "lucide-react";
 
 export default function Home() {
   const featuredHorses: any[] = [];
@@ -147,7 +147,100 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Call to Action */}
+      {/* Services Section — Logística e Insumos */}
+      <section className="py-24 bg-white relative overflow-hidden">
+        {/* Decorative background */}
+        <div className="absolute top-0 left-0 w-72 h-72 bg-emerald-50 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl opacity-60" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-amber-50 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl opacity-60" />
+
+        <div className="container px-4 relative z-10">
+          <div className="text-center mb-16">
+            <span className="text-secondary font-semibold tracking-[0.2em] text-xs uppercase">Todo en un solo lugar</span>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-primary mt-3 mb-4">Logística e Insumos</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg leading-relaxed">
+              Más que un marketplace de caballos. Conectá con transportistas, proveedores de alimento, personal calificado y veterinarias especializadas.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {/* Transport */}
+            <Link href="/servicios/transporte">
+              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-emerald-500 transition-all duration-500">
+                    <Truck className="w-7 h-7 text-emerald-600 group-hover:text-white transition-colors duration-500" />
+                  </div>
+                  <h3 className="font-serif text-lg font-bold text-foreground mb-2 group-hover:text-emerald-700 transition-colors">Transporte</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">Fletes con rutas definidas y disponibilidad inmediata.</p>
+                  <div className="flex items-center gap-1 text-sm font-semibold text-emerald-600 mt-4 group-hover:gap-2 transition-all">
+                    Explorar <ArrowRight className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+
+            {/* Supplies */}
+            <Link href="/servicios/insumos">
+              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-50/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-amber-500 transition-all duration-500">
+                    <Wheat className="w-7 h-7 text-amber-600 group-hover:text-white transition-colors duration-500" />
+                  </div>
+                  <h3 className="font-serif text-lg font-bold text-foreground mb-2 group-hover:text-amber-700 transition-colors">Insumos</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">Alfalfa, avena y balanceados por región y precio.</p>
+                  <div className="flex items-center gap-1 text-sm font-semibold text-amber-600 mt-4 group-hover:gap-2 transition-all">
+                    Explorar <ArrowRight className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+
+            {/* Staff */}
+            <Link href="/servicios/staff">
+              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-blue-500 transition-all duration-500">
+                    <Users className="w-7 h-7 text-blue-600 group-hover:text-white transition-colors duration-500" />
+                  </div>
+                  <h3 className="font-serif text-lg font-bold text-foreground mb-2 group-hover:text-blue-700 transition-colors">Staff</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">Petiseros, jugadores y managers disponibles.</p>
+                  <div className="flex items-center gap-1 text-sm font-semibold text-blue-600 mt-4 group-hover:gap-2 transition-all">
+                    Explorar <ArrowRight className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+
+            {/* Vets */}
+            <Link href="/servicios/veterinarias">
+              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-50/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-rose-100 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-rose-500 transition-all duration-500">
+                    <Stethoscope className="w-7 h-7 text-rose-600 group-hover:text-white transition-colors duration-500" />
+                  </div>
+                  <h3 className="font-serif text-lg font-bold text-foreground mb-2 group-hover:text-rose-700 transition-colors">Veterinarias</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">Clínicas equinas con servicio de emergencia.</p>
+                  <div className="flex items-center gap-1 text-sm font-semibold text-rose-600 mt-4 group-hover:gap-2 transition-all">
+                    Explorar <ArrowRight className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </div>
+
+          <div className="text-center mt-12">
+            <Link href="/servicios">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-white rounded-xl px-10 h-13 shadow-lg hover:shadow-xl transition-all duration-300 gap-2">
+                Ver todos los servicios <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
       <section className="py-24 bg-white">
         <div className="container px-4">
           <div className="bg-gradient-to-br from-[#1A1A1A] to-[#0d1f15] rounded-3xl overflow-hidden relative">
