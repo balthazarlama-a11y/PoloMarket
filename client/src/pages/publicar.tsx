@@ -371,6 +371,7 @@ export default function Publicar() {
                                                 <select id="staffRole" required value={formData.staffRole || ""} onChange={e => updateField("staffRole", e.target.value)} className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 text-sm">
                                                     <option value="">Seleccionar...</option>
                                                     <option value="Petisero">Petisero</option>
+                                                    <option value="Changuero">Changuero</option>
                                                     <option value="Jugador">Jugador</option>
                                                     <option value="Manager">Manager</option>
                                                     <option value="Otro">Otro</option>

@@ -14,7 +14,7 @@ const REGIONES = [
     "Santa Fe", "Mendoza", "Salta", "Tucumán",
 ];
 
-const STAFF_ROLES = ["Petisero", "Jugador", "Manager", "Otro"];
+const STAFF_ROLES = ["Petisero", "Changuero", "Jugador", "Manager", "Otro"];
 
 export default function ServiciosStaff() {
     const [roleFilter, setRoleFilter] = useState("");

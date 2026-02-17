@@ -210,7 +210,7 @@ export const staffListings = pgTable("staff_listings", {
 
 export const insertStaffListingSchema = createInsertSchema(staffListings, {
   title: z.string().min(1, "El título es requerido"),
-  staffRole: z.enum(["Petisero", "Jugador", "Manager", "Otro"]),
+  staffRole: z.enum(["Petisero", "Jugador", "Manager", "Changuero", "Otro"]),
   experienceYears: z.number().int().min(0).optional(),
   region: z.string().min(1, "La región es requerida"),
   availability: z.enum(["Disponible", "No disponible", "Por consultar"]).optional(),
