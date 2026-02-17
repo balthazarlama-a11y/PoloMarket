@@ -15,35 +15,36 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  // Ensure session table exists (safely)
-  if (storage.db) {
-    try {
-      // Use raw SQL string for Drizzle execute
-      await storage.db.execute(sql.raw(`
-        CREATE TABLE IF NOT EXISTS "session" (
-          "sid" varchar NOT NULL COLLATE "default",
-          "sess" json NOT NULL,
-          "expire" timestamp(6) NOT NULL
-        )
-        WITH (OIDS=FALSE);
-      `));
-      await storage.db.execute(sql.raw(`
-        ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
-      `)).catch(() => { }); // Ignore if constraint already exists
-      await storage.db.execute(sql.raw(`
-        CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");
-      `));
-      console.log("Session table verified/created");
-    } catch (err) {
-      console.error("Error verifying session table:", err);
-    }
-  }
+  // Removed blocking DB checks from startup to prevent timeouts.
+  // Table verification is now handled via /api/debug or manual migration.
 
   // ========== Debug route (Temporary) ==========
   app.get("/api/debug", async (_req, res) => {
     try {
       if (!storage.db) {
         return res.status(500).json({ status: "error", message: "Database not initialized (pool is null)" });
+      }
+
+      // Try to create session table here (lazily) to fix missing table issues without crashing boot
+      let sessionTableStatus = "checked";
+      try {
+        await storage.db.execute(sql.raw(`
+            CREATE TABLE IF NOT EXISTS "session" (
+              "sid" varchar NOT NULL COLLATE "default",
+              "sess" json NOT NULL,
+              "expire" timestamp(6) NOT NULL
+            )
+            WITH (OIDS=FALSE);
+         `));
+        await storage.db.execute(sql.raw(`
+            ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+         `)).catch(() => { });
+        await storage.db.execute(sql.raw(`
+            CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");
+         `));
+        sessionTableStatus = "verified_and_created";
+      } catch (err: any) {
+        sessionTableStatus = "error: " + err.message;
       }
 
       // Check connection by running a simple query
@@ -58,6 +59,7 @@ export async function registerRoutes(
 
       res.json({
         status: "ok",
+        sessionTable: sessionTableStatus,
         timestamp: now[0],
         tables: tables.map((t: any) => t.table_name),
         env: {
