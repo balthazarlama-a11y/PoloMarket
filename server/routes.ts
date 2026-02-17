@@ -43,7 +43,7 @@ export async function registerRoutes(
       if (!storage.db) return res.status(500).json({ message: "No DB connection" });
 
       // 1. Users
-      await storage.db.execute(sql.raw(`
+      await storage.db.execute(sql`
         CREATE TABLE IF NOT EXISTS "users" (
           "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
           "email" text NOT NULL UNIQUE,
@@ -54,10 +54,10 @@ export async function registerRoutes(
           "verified" boolean DEFAULT false,
           "created_at" timestamp DEFAULT now() NOT NULL
         );
-      `));
+      `);
 
       // 2. Plans
-      await storage.db.execute(sql.raw(`
+      await storage.db.execute(sql`
         CREATE TABLE IF NOT EXISTS "plans" (
           "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
           "name" text NOT NULL,
@@ -68,10 +68,10 @@ export async function registerRoutes(
           "features" jsonb,
           "created_at" timestamp DEFAULT now() NOT NULL
         );
-      `));
+      `);
 
       // 3. User Plans
-      await storage.db.execute(sql.raw(`
+      await storage.db.execute(sql`
         CREATE TABLE IF NOT EXISTS "user_plans" (
           "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
           "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
@@ -80,10 +80,10 @@ export async function registerRoutes(
           "expires_at" timestamp,
           "created_at" timestamp DEFAULT now() NOT NULL
         );
-      `));
+      `);
 
       // 4. Horses
-      await storage.db.execute(sql.raw(`
+      await storage.db.execute(sql`
         CREATE TABLE IF NOT EXISTS "horses" (
           "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
           "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
@@ -108,10 +108,10 @@ export async function registerRoutes(
           "created_at" timestamp DEFAULT now() NOT NULL,
           "updated_at" timestamp DEFAULT now() NOT NULL
         );
-      `));
+      `);
 
       // 5. Transports
-      await storage.db.execute(sql.raw(`
+      await storage.db.execute(sql`
         CREATE TABLE IF NOT EXISTS "transports" (
           "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
           "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
@@ -125,10 +125,10 @@ export async function registerRoutes(
           "status" text DEFAULT 'active',
           "created_at" timestamp DEFAULT now() NOT NULL
         );
-      `));
+      `);
 
       // 6. Supplies
-      await storage.db.execute(sql.raw(`
+      await storage.db.execute(sql`
         CREATE TABLE IF NOT EXISTS "supplies" (
           "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
           "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
@@ -143,10 +143,10 @@ export async function registerRoutes(
           "status" text DEFAULT 'active',
           "created_at" timestamp DEFAULT now() NOT NULL
         );
-      `));
+      `);
 
       // 7. Staff Listings
-      await storage.db.execute(sql.raw(`
+      await storage.db.execute(sql`
         CREATE TABLE IF NOT EXISTS "staff_listings" (
           "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
           "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
@@ -160,10 +160,10 @@ export async function registerRoutes(
           "status" text DEFAULT 'active',
           "created_at" timestamp DEFAULT now() NOT NULL
         );
-      `));
+      `);
 
       // 8. Vet Clinics
-      await storage.db.execute(sql.raw(`
+      await storage.db.execute(sql`
         CREATE TABLE IF NOT EXISTS "vet_clinics" (
           "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
           "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
@@ -178,10 +178,10 @@ export async function registerRoutes(
           "status" text DEFAULT 'active',
           "created_at" timestamp DEFAULT now() NOT NULL
         );
-      `));
+      `);
 
       // 9. Accessories
-      await storage.db.execute(sql.raw(`
+      await storage.db.execute(sql`
         CREATE TABLE IF NOT EXISTS "accessories" (
           "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
           "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
@@ -197,7 +197,7 @@ export async function registerRoutes(
           "status" text DEFAULT 'active',
           "created_at" timestamp DEFAULT now() NOT NULL
         );
-      `));
+      `);
 
       res.json({ message: "All tables verified/created successfully" });
     } catch (err: any) {

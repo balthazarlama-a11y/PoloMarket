@@ -1,8 +1,10 @@
 import { drizzle } from "drizzle-orm/node-postgres";
-import pg from "pg";
+// @ts-ignore
+import pkg from "pg";
 import * as schema from "@shared/schema";
 
-const { Pool } = pg;
+const { Pool } = pkg;
+
 
 if (!process.env.DATABASE_URL) {
   console.warn("DATABASE_URL not set — database features will not work");
