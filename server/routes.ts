@@ -73,7 +73,7 @@ export async function registerRoutes(
         return res.status(400).json({ message: "Datos inválidos", errors: error.errors });
       }
       console.error("Register error:", error);
-      res.status(500).json({ message: "Error al registrar usuario" });
+      res.status(500).json({ message: `Error al registrar: ${error.message}` });
     }
   });
 
@@ -105,8 +105,9 @@ export async function registerRoutes(
 
       const { password: _, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
-    } catch (error) {
-      res.status(500).json({ message: "Error al iniciar sesión" });
+    } catch (error: any) {
+      console.error("Login error:", error);
+      res.status(500).json({ message: `Error al iniciar sesión: ${error.message}` });
     }
   });
 
