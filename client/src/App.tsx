@@ -12,6 +12,11 @@ import HorseDetail from "@/pages/horse-detail";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
 import RegisterBusiness from "@/pages/register-business";
+import Servicios from "@/pages/servicios";
+import ServiciosTransporte from "@/pages/servicios-transporte";
+import ServiciosInsumos from "@/pages/servicios-insumos";
+import ServiciosStaff from "@/pages/servicios-staff";
+import ServiciosVeterinarias from "@/pages/servicios-veterinarias";
 
 function Router() {
   return (
@@ -24,6 +29,11 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/register-business" component={RegisterBusiness} />
+      <Route path="/servicios" component={Servicios} />
+      <Route path="/servicios/transporte" component={ServiciosTransporte} />
+      <Route path="/servicios/insumos" component={ServiciosInsumos} />
+      <Route path="/servicios/staff" component={ServiciosStaff} />
+      <Route path="/servicios/veterinarias" component={ServiciosVeterinarias} />
       <Route component={NotFound} />
     </Switch>
   );

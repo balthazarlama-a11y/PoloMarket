@@ -116,3 +116,141 @@ export const insertHorseSchema = createInsertSchema(horses, {
 
 export type InsertHorse = z.infer<typeof insertHorseSchema>;
 export type Horse = typeof horses.$inferSelect;
+
+// ==========================================
+// SERVICIOS — Logística e Insumos
+// ==========================================
+
+// Transporte (Fletes)
+export const transports = pgTable("transports", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  originRegion: text("origin_region").notNull(),
+  destinationRegion: text("destination_region").notNull(),
+  truckCapacity: integer("truck_capacity"), // cantidad de caballos
+  pricePerKm: decimal("price_per_km", { precision: 10, scale: 2 }),
+  fixedPrice: decimal("fixed_price", { precision: 10, scale: 2 }),
+  currency: text("currency").default("CLP"),
+  availability: text("availability").default("Disponible"), // Disponible, Ocupado, Por consultar
+  phone: text("phone"),
+  description: text("description"),
+  images: jsonb("images"), // Array of image URLs
+  status: text("status").default("active"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertTransportSchema = createInsertSchema(transports, {
+  title: z.string().min(1, "El título es requerido"),
+  originRegion: z.string().min(1, "La región de origen es requerida"),
+  destinationRegion: z.string().min(1, "La región de destino es requerida"),
+  truckCapacity: z.number().int().min(1).optional(),
+  pricePerKm: z.string().or(z.number()).optional(),
+  fixedPrice: z.string().or(z.number()).optional(),
+  currency: z.enum(["CLP", "USD", "ARS"]).optional(),
+  availability: z.enum(["Disponible", "Ocupado", "Por consultar"]).optional(),
+  phone: z.string().optional(),
+  description: z.string().optional(),
+  images: z.array(z.string()).optional(),
+}).omit({ id: true, userId: true, status: true, createdAt: true, updatedAt: true });
+
+export type InsertTransport = z.infer<typeof insertTransportSchema>;
+export type Transport = typeof transports.$inferSelect;
+
+// Insumos (Fardos / Alimento)
+export const supplies = pgTable("supplies", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  supplyType: text("supply_type").notNull(), // Alfalfa, Avena, Pasto, Balanceado, Otro
+  unitMeasure: text("unit_measure").notNull(), // Fardo, Kg, Tonelada, Bolsa
+  pricePerUnit: decimal("price_per_unit", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").default("CLP"),
+  minOrder: integer("min_order").default(1),
+  region: text("region").notNull(),
+  description: text("description"),
+  images: jsonb("images"),
+  status: text("status").default("active"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertSupplySchema = createInsertSchema(supplies, {
+  title: z.string().min(1, "El título es requerido"),
+  supplyType: z.enum(["Alfalfa", "Avena", "Pasto", "Balanceado", "Otro"]),
+  unitMeasure: z.enum(["Fardo", "Kg", "Tonelada", "Bolsa"]),
+  pricePerUnit: z.string().or(z.number()),
+  currency: z.enum(["CLP", "USD", "ARS"]).optional(),
+  minOrder: z.number().int().min(1).optional(),
+  region: z.string().min(1, "La región es requerida"),
+  description: z.string().optional(),
+  images: z.array(z.string()).optional(),
+}).omit({ id: true, userId: true, status: true, createdAt: true, updatedAt: true });
+
+export type InsertSupply = z.infer<typeof insertSupplySchema>;
+export type Supply = typeof supplies.$inferSelect;
+
+// Staff (Bolsa de Trabajo)
+export const staffListings = pgTable("staff_listings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  staffRole: text("staff_role").notNull(), // Petisero, Jugador, Manager, Otro
+  experienceYears: integer("experience_years"),
+  region: text("region").notNull(),
+  availability: text("availability").default("Disponible"), // Disponible, No disponible, Por consultar
+  salaryExpectation: text("salary_expectation"),
+  description: text("description"),
+  references: jsonb("references"), // Array of reference strings
+  status: text("status").default("active"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertStaffListingSchema = createInsertSchema(staffListings, {
+  title: z.string().min(1, "El título es requerido"),
+  staffRole: z.enum(["Petisero", "Jugador", "Manager", "Otro"]),
+  experienceYears: z.number().int().min(0).optional(),
+  region: z.string().min(1, "La región es requerida"),
+  availability: z.enum(["Disponible", "No disponible", "Por consultar"]).optional(),
+  salaryExpectation: z.string().optional(),
+  description: z.string().optional(),
+  references: z.array(z.string()).optional(),
+}).omit({ id: true, userId: true, status: true, createdAt: true, updatedAt: true });
+
+export type InsertStaffListing = z.infer<typeof insertStaffListingSchema>;
+export type StaffListing = typeof staffListings.$inferSelect;
+
+// Veterinarias (Directorio)
+export const vetClinics = pgTable("vet_clinics", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  clinicName: text("clinic_name").notNull(),
+  specialty: text("specialty").notNull(), // Equina general, Traumatología, Reproducción, Odontología, Otro
+  region: text("region").notNull(),
+  address: text("address"),
+  phone: text("phone"),
+  email: text("email"),
+  emergencyService: boolean("emergency_service").default(false),
+  description: text("description"),
+  images: jsonb("images"),
+  status: text("status").default("active"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertVetClinicSchema = createInsertSchema(vetClinics, {
+  clinicName: z.string().min(1, "El nombre de la clínica es requerido"),
+  specialty: z.enum(["Equina general", "Traumatología", "Reproducción", "Odontología", "Otro"]),
+  region: z.string().min(1, "La región es requerida"),
+  address: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().email().optional().or(z.literal("")),
+  emergencyService: z.boolean().optional(),
+  description: z.string().optional(),
+  images: z.array(z.string()).optional(),
+}).omit({ id: true, userId: true, status: true, createdAt: true, updatedAt: true });
+
+export type InsertVetClinic = z.infer<typeof insertVetClinicSchema>;
+export type VetClinic = typeof vetClinics.$inferSelect;

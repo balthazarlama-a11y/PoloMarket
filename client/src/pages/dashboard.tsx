@@ -2,18 +2,19 @@ import { Navbar, Footer } from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Plus, Settings, CreditCard, Eye, Edit, Trash2, BarChart3, Horse, LogIn } from "lucide-react";
+import { Plus, Settings, CreditCard, Eye, Edit, Trash2, BarChart3, LogIn, Truck, Wheat, Users, Stethoscope, Briefcase } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getQueryFn, apiRequest } from "@/lib/queryClient";
 import { Link, useLocation } from "wouter";
 import { useEffect } from "react";
+import { ServiceCard } from "@/components/ui/service-card";
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
 
   // Get current user
-  const { data: authData, isLoading: authLoading } = useQuery({
+  const { data: authData, isLoading: authLoading } = useQuery<any>({
     queryKey: ["/api/auth/me"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
@@ -32,6 +33,50 @@ export default function Dashboard() {
   });
 
   const horses = horsesData?.horses || [];
+
+  // Get user's services
+  const { data: userTransports } = useQuery({
+    queryKey: ["/api/services/transports", { userId: user?.id }],
+    queryFn: async () => {
+      if (!user?.id) return { transports: [] };
+      const res = await fetch(`/api/services/transports?userId=${user.id}`);
+      return res.json();
+    },
+    enabled: !!user?.id,
+  });
+  const { data: userSupplies } = useQuery({
+    queryKey: ["/api/services/supplies", { userId: user?.id }],
+    queryFn: async () => {
+      if (!user?.id) return { supplies: [] };
+      const res = await fetch(`/api/services/supplies?userId=${user.id}`);
+      return res.json();
+    },
+    enabled: !!user?.id,
+  });
+  const { data: userStaff } = useQuery({
+    queryKey: ["/api/services/staff", { userId: user?.id }],
+    queryFn: async () => {
+      if (!user?.id) return { staffListings: [] };
+      const res = await fetch(`/api/services/staff?userId=${user.id}`);
+      return res.json();
+    },
+    enabled: !!user?.id,
+  });
+  const { data: userVets } = useQuery({
+    queryKey: ["/api/services/vets", { userId: user?.id }],
+    queryFn: async () => {
+      if (!user?.id) return { vetClinics: [] };
+      const res = await fetch(`/api/services/vets?userId=${user.id}`);
+      return res.json();
+    },
+    enabled: !!user?.id,
+  });
+
+  const myTransports = userTransports?.transports || [];
+  const mySupplies = userSupplies?.supplies || [];
+  const myStaff = userStaff?.staffListings || [];
+  const myVets = userVets?.vetClinics || [];
+  const totalServices = myTransports.length + mySupplies.length + myStaff.length + myVets.length;
 
   // Delete horse mutation
   const deleteMutation = useMutation({
@@ -143,6 +188,9 @@ export default function Dashboard() {
                 <TabsTrigger value="listings" className="rounded-none border-b-2 border-transparent data-[state=active]:border-secondary data-[state=active]:text-primary data-[state=active]:shadow-none px-0 py-3 font-medium">
                   Mis Caballos
                 </TabsTrigger>
+                <TabsTrigger value="services" className="rounded-none border-b-2 border-transparent data-[state=active]:border-secondary data-[state=active]:text-primary data-[state=active]:shadow-none px-0 py-3 font-medium">
+                  Mis Servicios {totalServices > 0 && <span className="ml-1.5 text-xs bg-secondary/15 text-secondary px-1.5 py-0.5 rounded-full">{totalServices}</span>}
+                </TabsTrigger>
                 <TabsTrigger value="payments" className="rounded-none border-b-2 border-transparent data-[state=active]:border-secondary data-[state=active]:text-primary data-[state=active]:shadow-none px-0 py-3 font-medium">
                   Pagos
                 </TabsTrigger>
@@ -211,6 +259,66 @@ export default function Dashboard() {
                     <Button className="bg-secondary text-white hover:bg-secondary/90 gap-2 rounded-xl">
                       <Plus className="w-4 h-4" /> Publicar mi primer caballo
                     </Button>
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="services" className="pt-6">
+                {totalServices > 0 ? (
+                  <div className="space-y-6">
+                    {myTransports.length > 0 && (
+                      <div>
+                        <h3 className="flex items-center gap-2 font-semibold text-sm text-emerald-700 mb-3"><Truck className="w-4 h-4" /> Transporte ({myTransports.length})</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {myTransports.map((t: any) => (
+                            <ServiceCard key={t.id} category="transport" title={t.title} subtitle={`${t.originRegion} → ${t.destinationRegion}`} details={[...(t.truckCapacity ? [{ icon: Truck, label: "Cap", value: `${t.truckCapacity} caballos` }] : [])]} badge={t.availability} region={t.originRegion} />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {mySupplies.length > 0 && (
+                      <div>
+                        <h3 className="flex items-center gap-2 font-semibold text-sm text-amber-700 mb-3"><Wheat className="w-4 h-4" /> Insumos ({mySupplies.length})</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {mySupplies.map((s: any) => (
+                            <ServiceCard key={s.id} category="supply" title={s.title} subtitle={`${s.supplyType} — ${s.unitMeasure}`} details={[]} badge={s.supplyType} price={`$${Number(s.pricePerUnit).toLocaleString()} / ${s.unitMeasure}`} region={s.region} />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {myStaff.length > 0 && (
+                      <div>
+                        <h3 className="flex items-center gap-2 font-semibold text-sm text-blue-700 mb-3"><Users className="w-4 h-4" /> Staff ({myStaff.length})</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {myStaff.map((s: any) => (
+                            <ServiceCard key={s.id} category="staff" title={s.title} subtitle={s.staffRole} details={[...(s.experienceYears != null ? [{ icon: Briefcase, label: "Exp", value: `${s.experienceYears} años` }] : [])]} badge={s.staffRole} region={s.region} />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {myVets.length > 0 && (
+                      <div>
+                        <h3 className="flex items-center gap-2 font-semibold text-sm text-rose-700 mb-3"><Stethoscope className="w-4 h-4" /> Veterinarias ({myVets.length})</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {myVets.map((v: any) => (
+                            <ServiceCard key={v.id} category="vet" title={v.clinicName} subtitle={v.specialty} details={[]} badge={v.emergencyService ? "Emergencia 24h" : v.specialty} region={v.region} />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-16 bg-card rounded-2xl border border-border/50">
+                    <div className="text-5xl mb-4">🔧</div>
+                    <h3 className="font-serif text-xl font-bold text-primary mb-2">Sin servicios publicados</h3>
+                    <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
+                      Publicá servicios de transporte, insumos, staff o veterinaria para la comunidad del polo.
+                    </p>
+                    <Link href="/servicios">
+                      <Button className="bg-secondary text-white hover:bg-secondary/90 gap-2 rounded-xl">
+                        <Plus className="w-4 h-4" /> Ver categorías de servicios
+                      </Button>
+                    </Link>
                   </div>
                 )}
               </TabsContent>

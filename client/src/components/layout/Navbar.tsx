@@ -1,17 +1,27 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut, ChevronDown } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Menu, X, User, LogOut, ChevronDown, Truck, Wheat, Users, Stethoscope } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { apiRequest } from "@/lib/queryClient";
 
+const serviceLinks = [
+  { href: "/servicios/transporte", label: "Transporte (Fletes)", icon: Truck, color: "text-emerald-600" },
+  { href: "/servicios/insumos", label: "Insumos (Fardos)", icon: Wheat, color: "text-amber-600" },
+  { href: "/servicios/staff", label: "Staff (Bolsa de Trabajo)", icon: Users, color: "text-blue-600" },
+  { href: "/servicios/veterinarias", label: "Veterinarias", icon: Stethoscope, color: "text-rose-600" },
+];
+
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [location] = useLocation();
   const queryClient = useQueryClient();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -19,7 +29,18 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const { data: authData } = useQuery({
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setServicesOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const { data: authData } = useQuery<any>({
     queryKey: ["/api/auth/me"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
@@ -40,11 +61,7 @@ export function Navbar() {
     logoutMutation.mutate();
   };
 
-  const links = [
-    { href: "/", label: "Inicio" },
-    { href: "/marketplace", label: "Marketplace" },
-    { href: "/verification", label: "Verificación" },
-  ];
+  const isServicesActive = location.startsWith("/servicios");
 
   const getInitials = (name?: string, email?: string) => {
     if (name) return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
@@ -70,23 +87,97 @@ export function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex md:items-center md:gap-1">
-          {links.map((link) => (
-            <Link key={link.href} href={link.href}>
-              <a
-                className={cn(
-                  "relative px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-accent",
-                  location === link.href
-                    ? "text-primary font-semibold"
-                    : "text-muted-foreground hover:text-primary"
-                )}
-              >
-                {link.label}
-                {location === link.href && (
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-secondary rounded-full" />
-                )}
-              </a>
-            </Link>
-          ))}
+          {/* Inicio */}
+          <Link href="/">
+            <a className={cn(
+              "relative px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-accent",
+              location === "/" ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
+            )}>
+              Inicio
+              {location === "/" && (
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-secondary rounded-full" />
+              )}
+            </a>
+          </Link>
+
+          {/* Marketplace */}
+          <Link href="/marketplace">
+            <a className={cn(
+              "relative px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-accent",
+              location === "/marketplace" ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
+            )}>
+              Marketplace
+              {location === "/marketplace" && (
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-secondary rounded-full" />
+              )}
+            </a>
+          </Link>
+
+          {/* Servicios Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setServicesOpen(!servicesOpen)}
+              className={cn(
+                "flex items-center gap-1 px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-accent",
+                isServicesActive ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
+              )}
+            >
+              Servicios
+              <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", servicesOpen && "rotate-180")} />
+              {isServicesActive && (
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-secondary rounded-full" />
+              )}
+            </button>
+
+            {/* Dropdown panel */}
+            {servicesOpen && (
+              <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl border border-border/60 shadow-xl overflow-hidden animate-slide-down z-50">
+                <div className="p-2">
+                  <Link href="/servicios">
+                    <a
+                      className="block px-4 py-2.5 text-sm font-semibold text-primary hover:bg-accent rounded-lg transition-colors"
+                      onClick={() => setServicesOpen(false)}
+                    >
+                      Ver todos los servicios
+                    </a>
+                  </Link>
+                  <div className="h-px bg-border/50 my-1" />
+                  {serviceLinks.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <Link key={item.href} href={item.href}>
+                        <a
+                          className={cn(
+                            "flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition-colors hover:bg-accent",
+                            location === item.href ? "bg-accent font-medium text-primary" : "text-muted-foreground hover:text-foreground"
+                          )}
+                          onClick={() => setServicesOpen(false)}
+                        >
+                          <Icon className={cn("w-4 h-4", item.color)} />
+                          {item.label}
+                        </a>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Verificación */}
+          <Link href="/verification">
+            <a className={cn(
+              "relative px-4 py-2 text-sm font-medium transition-colors rounded-lg hover:bg-accent",
+              location === "/verification" ? "text-primary font-semibold" : "text-muted-foreground hover:text-primary"
+            )}>
+              Verificación
+              {location === "/verification" && (
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-secondary rounded-full" />
+              )}
+            </a>
+          </Link>
+
+          {/* Auth buttons */}
           <div className="flex items-center gap-3 border-l border-border/50 pl-6 ml-4">
             {user ? (
               <>
@@ -138,25 +229,91 @@ export function Navbar() {
       <div
         className={cn(
           "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
-          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
         )}
       >
         <div className="border-t border-border/50 bg-background p-4 space-y-1">
-          {links.map((link) => (
-            <Link key={link.href} href={link.href}>
-              <a
-                className={cn(
-                  "block py-3 px-4 text-sm font-medium rounded-lg transition-colors",
-                  location === link.href
-                    ? "bg-primary/5 text-primary font-semibold border-l-2 border-secondary"
-                    : "text-muted-foreground hover:text-primary hover:bg-accent"
-                )}
-                onClick={() => setIsOpen(false)}
-              >
-                {link.label}
-              </a>
-            </Link>
-          ))}
+          <Link href="/">
+            <a
+              className={cn(
+                "block py-3 px-4 text-sm font-medium rounded-lg transition-colors",
+                location === "/" ? "bg-primary/5 text-primary font-semibold border-l-2 border-secondary" : "text-muted-foreground hover:text-primary hover:bg-accent"
+              )}
+              onClick={() => setIsOpen(false)}
+            >
+              Inicio
+            </a>
+          </Link>
+          <Link href="/marketplace">
+            <a
+              className={cn(
+                "block py-3 px-4 text-sm font-medium rounded-lg transition-colors",
+                location === "/marketplace" ? "bg-primary/5 text-primary font-semibold border-l-2 border-secondary" : "text-muted-foreground hover:text-primary hover:bg-accent"
+              )}
+              onClick={() => setIsOpen(false)}
+            >
+              Marketplace
+            </a>
+          </Link>
+
+          {/* Mobile Servicios Expandable */}
+          <div>
+            <button
+              className={cn(
+                "w-full flex items-center justify-between py-3 px-4 text-sm font-medium rounded-lg transition-colors",
+                isServicesActive ? "bg-primary/5 text-primary font-semibold border-l-2 border-secondary" : "text-muted-foreground hover:text-primary hover:bg-accent"
+              )}
+              onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+            >
+              Servicios
+              <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", mobileServicesOpen && "rotate-180")} />
+            </button>
+            <div className={cn(
+              "overflow-hidden transition-all duration-300",
+              mobileServicesOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
+            )}>
+              <div className="pl-4 space-y-1 pt-1">
+                <Link href="/servicios">
+                  <a
+                    className="block py-2 px-4 text-sm text-primary font-medium rounded-lg hover:bg-accent transition-colors"
+                    onClick={() => { setIsOpen(false); setMobileServicesOpen(false); }}
+                  >
+                    Ver todos
+                  </a>
+                </Link>
+                {serviceLinks.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link key={item.href} href={item.href}>
+                      <a
+                        className={cn(
+                          "flex items-center gap-2 py-2 px-4 text-sm rounded-lg transition-colors",
+                          location === item.href ? "text-primary font-medium bg-accent" : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                        )}
+                        onClick={() => { setIsOpen(false); setMobileServicesOpen(false); }}
+                      >
+                        <Icon className={cn("w-4 h-4", item.color)} />
+                        {item.label}
+                      </a>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <Link href="/verification">
+            <a
+              className={cn(
+                "block py-3 px-4 text-sm font-medium rounded-lg transition-colors",
+                location === "/verification" ? "bg-primary/5 text-primary font-semibold border-l-2 border-secondary" : "text-muted-foreground hover:text-primary hover:bg-accent"
+              )}
+              onClick={() => setIsOpen(false)}
+            >
+              Verificación
+            </a>
+          </Link>
+
           <div className="pt-3 border-t border-border/50 space-y-2">
             {user ? (
               <>
@@ -206,7 +363,7 @@ export function Footer() {
     <footer className="bg-primary text-primary-foreground">
       {/* Main Footer */}
       <div className="container px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-12">
           <div className="space-y-4 md:col-span-1">
             <h3 className="font-serif text-2xl font-bold">Polo Market</h3>
             <p className="text-primary-foreground/70 text-sm leading-relaxed max-w-xs">
@@ -232,6 +389,16 @@ export function Footer() {
               <li><Link href="/marketplace?type=sale" className="hover:text-secondary transition-colors">Venta</Link></li>
               <li><Link href="/marketplace?type=rent" className="hover:text-secondary transition-colors">Arriendo</Link></li>
               <li><Link href="/marketplace?sort=featured" className="hover:text-secondary transition-colors">Destacados</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-5 text-sm uppercase tracking-wider text-primary-foreground/90">Servicios</h4>
+            <ul className="space-y-3 text-sm text-primary-foreground/60">
+              <li><Link href="/servicios/transporte" className="hover:text-secondary transition-colors">Transporte</Link></li>
+              <li><Link href="/servicios/insumos" className="hover:text-secondary transition-colors">Insumos</Link></li>
+              <li><Link href="/servicios/staff" className="hover:text-secondary transition-colors">Staff</Link></li>
+              <li><Link href="/servicios/veterinarias" className="hover:text-secondary transition-colors">Veterinarias</Link></li>
             </ul>
           </div>
 
