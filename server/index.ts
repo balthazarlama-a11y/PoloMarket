@@ -4,8 +4,14 @@ import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
+import pgSession from "connect-pg-simple";
+import { pool } from "./db";
+
 const app = express();
 const httpServer = createServer(app);
+
+// Essential for Vercel/Proxy environments to ensure cookies work
+app.set("trust proxy", 1);
 
 declare module "http" {
   interface IncomingMessage {
@@ -29,16 +35,22 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 
-// Configure session
+// Configure session with PostgreSQL store
+const PgSessionStore = pgSession(session);
+
 app.use(
   session({
+    store: new PgSessionStore({
+      pool: pool || undefined,
+      createTableIfMissing: true,
+    }),
     secret: process.env.SESSION_SECRET || "polomarket-secret-key-change-in-production",
     resave: false,
     saveUninitialized: false,
     cookie: {
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
       sameSite: "lax",
     },
   })
