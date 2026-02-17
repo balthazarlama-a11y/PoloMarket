@@ -37,15 +37,23 @@ app.use(express.urlencoded({ extended: false }));
 
 // Configure session with PostgreSQL store
 const PgSessionStore = pgSession(session);
-const store = new PgSessionStore({
-  pool: pool || undefined,
-  createTableIfMissing: true,
-});
+const MemoryStore = session.MemoryStore;
 
-// CRITICAL: Handle session store errors to prevent app crash
-store.on("error", (err) => {
-  console.error("Session store error:", err);
-});
+let store: session.Store;
+
+if (pool) {
+  store = new PgSessionStore({
+    pool: pool,
+    createTableIfMissing: false, // Prevent startup crash, will handle in routes
+  });
+  // CRITICAL: Handle session store errors to prevent app crash
+  store.on("error", (err) => {
+    console.error("Session store error:", err);
+  });
+} else {
+  console.warn("Using MemoryStore for session (database not available)");
+  store = new MemoryStore();
+}
 
 app.use(
   session({

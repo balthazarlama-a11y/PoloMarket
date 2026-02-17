@@ -15,6 +15,30 @@ export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  // Ensure session table exists (safely)
+  if (storage.db) {
+    try {
+      // Use raw SQL string for Drizzle execute
+      await storage.db.execute(sql.raw(`
+        CREATE TABLE IF NOT EXISTS "session" (
+          "sid" varchar NOT NULL COLLATE "default",
+          "sess" json NOT NULL,
+          "expire" timestamp(6) NOT NULL
+        )
+        WITH (OIDS=FALSE);
+      `));
+      await storage.db.execute(sql.raw(`
+        ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+      `)).catch(() => { }); // Ignore if constraint already exists
+      await storage.db.execute(sql.raw(`
+        CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");
+      `));
+      console.log("Session table verified/created");
+    } catch (err) {
+      console.error("Error verifying session table:", err);
+    }
+  }
+
   // ========== Debug route (Temporary) ==========
   app.get("/api/debug", async (_req, res) => {
     try {
