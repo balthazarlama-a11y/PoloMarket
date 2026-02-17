@@ -17,6 +17,7 @@ import ServiciosTransporte from "@/pages/servicios-transporte";
 import ServiciosInsumos from "@/pages/servicios-insumos";
 import ServiciosStaff from "@/pages/servicios-staff";
 import ServiciosVeterinarias from "@/pages/servicios-veterinarias";
+import Accesorios from "@/pages/accesorios";
 
 function Router() {
   return (
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/servicios/insumos" component={ServiciosInsumos} />
       <Route path="/servicios/staff" component={ServiciosStaff} />
       <Route path="/servicios/veterinarias" component={ServiciosVeterinarias} />
+      <Route path="/accesorios" component={Accesorios} />
       <Route component={NotFound} />
     </Switch>
   );

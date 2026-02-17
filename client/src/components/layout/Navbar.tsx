@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut, ChevronDown, Truck, Wheat, Users, Stethoscope } from "lucide-react";
+import { Menu, X, User, LogOut, ChevronDown, Truck, Wheat, Users, Stethoscope, ShoppingBag } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,6 +12,7 @@ const serviceLinks = [
   { href: "/servicios/insumos", label: "Insumos (Fardos)", icon: Wheat, color: "text-amber-600" },
   { href: "/servicios/staff", label: "Staff (Bolsa de Trabajo)", icon: Users, color: "text-blue-600" },
   { href: "/servicios/veterinarias", label: "Veterinarias", icon: Stethoscope, color: "text-rose-600" },
+  { href: "/accesorios", label: "Accesorios de Polo", icon: ShoppingBag, color: "text-violet-600" },
 ];
 
 export function Navbar() {

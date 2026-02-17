@@ -5,6 +5,7 @@ import {
   insertUserSchema, insertHorseSchema,
   insertTransportSchema, insertSupplySchema,
   insertStaffListingSchema, insertVetClinicSchema,
+  insertAccessorySchema,
 } from "@shared/schema";
 import { validateRUT } from "@shared/utils";
 import bcrypt from "bcryptjs";
@@ -432,6 +433,72 @@ export async function registerRoutes(
       res.json({ message: "Veterinaria eliminada" });
     } catch (error) {
       res.status(500).json({ message: "Error al eliminar veterinaria" });
+    }
+  });
+
+  // ========================================================
+  // ACCESSORIES
+  // ========================================================
+  app.get("/api/accessories", async (req, res) => {
+    try {
+      const { userId, region, category, condition, status, limit, offset } = req.query;
+      const items = await storage.getAccessories({
+        userId: userId as string, region: region as string,
+        category: category as string, condition: condition as string,
+        status: (status as string) || "active",
+        limit: limit ? parseInt(limit as string) : undefined,
+        offset: offset ? parseInt(offset as string) : undefined,
+      });
+      res.json({ accessories: items });
+    } catch (error) {
+      res.status(500).json({ message: "Error al obtener accesorios" });
+    }
+  });
+
+  app.get("/api/accessories/:id", async (req, res) => {
+    try {
+      const item = await storage.getAccessory(req.params.id);
+      if (!item) return res.status(404).json({ message: "Accesorio no encontrado" });
+      res.json({ accessory: item });
+    } catch (error) {
+      res.status(500).json({ message: "Error al obtener accesorio" });
+    }
+  });
+
+  app.post("/api/accessories", requireAuth, async (req, res) => {
+    try {
+      const body = insertAccessorySchema.parse(req.body);
+      const item = await storage.createAccessory({ ...body, userId: req.session.userId! });
+      res.status(201).json({ accessory: item });
+    } catch (error: any) {
+      if (error.name === "ZodError") return res.status(400).json({ message: "Datos inválidos", errors: error.errors });
+      res.status(500).json({ message: "Error al crear accesorio" });
+    }
+  });
+
+  app.put("/api/accessories/:id", requireAuth, async (req, res) => {
+    try {
+      const item = await storage.getAccessory(req.params.id);
+      if (!item) return res.status(404).json({ message: "Accesorio no encontrado" });
+      if (item.userId !== req.session.userId) return res.status(403).json({ message: "Sin permiso" });
+      const body = insertAccessorySchema.partial().parse(req.body);
+      const updated = await storage.updateAccessory(req.params.id, body as any);
+      res.json({ accessory: updated });
+    } catch (error: any) {
+      if (error.name === "ZodError") return res.status(400).json({ message: "Datos inválidos", errors: error.errors });
+      res.status(500).json({ message: "Error al actualizar accesorio" });
+    }
+  });
+
+  app.delete("/api/accessories/:id", requireAuth, async (req, res) => {
+    try {
+      const item = await storage.getAccessory(req.params.id);
+      if (!item) return res.status(404).json({ message: "Accesorio no encontrado" });
+      if (item.userId !== req.session.userId) return res.status(403).json({ message: "Sin permiso" });
+      await storage.deleteAccessory(req.params.id);
+      res.json({ message: "Accesorio eliminado" });
+    } catch (error) {
+      res.status(500).json({ message: "Error al eliminar accesorio" });
     }
   });
 

@@ -4,7 +4,7 @@ import { Link } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { HorseCard } from "@/components/ui/horse-card";
-import { Search, ShieldCheck, Trophy, Users, ArrowRight, Truck, Wheat, Stethoscope } from "lucide-react";
+import { Search, ShieldCheck, Trophy, Users, ArrowRight, Truck, Wheat, Stethoscope, ShoppingBag } from "lucide-react";
 
 export default function Home() {
   const featuredHorses: any[] = [];
@@ -162,7 +162,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
             {/* Transport */}
             <Link href="/servicios/transporte">
               <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden">
@@ -225,6 +225,23 @@ export default function Home() {
                   <h3 className="font-serif text-lg font-bold text-foreground mb-2 group-hover:text-rose-700 transition-colors">Veterinarias</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">Clínicas equinas con servicio de emergencia.</p>
                   <div className="flex items-center gap-1 text-sm font-semibold text-rose-600 mt-4 group-hover:gap-2 transition-all">
+                    Explorar <ArrowRight className="w-4 h-4" />
+                  </div>
+                </div>
+              </div>
+            </Link>
+
+            {/* Accessories */}
+            <Link href="/accesorios">
+              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden sm:col-span-2 lg:col-span-1">
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-50/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-violet-100 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-violet-500 transition-all duration-500">
+                    <ShoppingBag className="w-7 h-7 text-violet-600 group-hover:text-white transition-colors duration-500" />
+                  </div>
+                  <h3 className="font-serif text-lg font-bold text-foreground mb-2 group-hover:text-violet-700 transition-colors">Accesorios</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">Monturas, tacos, botas, cascos y más equipamiento.</p>
+                  <div className="flex items-center gap-1 text-sm font-semibold text-violet-600 mt-4 group-hover:gap-2 transition-all">
                     Explorar <ArrowRight className="w-4 h-4" />
                   </div>
                 </div>

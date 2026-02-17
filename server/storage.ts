@@ -4,7 +4,8 @@ import {
   type Supply, type InsertSupply,
   type StaffListing, type InsertStaffListing,
   type VetClinic, type InsertVetClinic,
-  users, horses, transports, supplies, staffListings, vetClinics,
+  type Accessory, type InsertAccessory,
+  users, horses, transports, supplies, staffListings, vetClinics, accessories,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { db } from "./db";
@@ -61,6 +62,13 @@ export interface IStorage {
   createVetClinic(clinic: InsertVetClinic & { userId: string }): Promise<VetClinic>;
   updateVetClinic(id: string, updates: Partial<VetClinic>): Promise<VetClinic>;
   deleteVetClinic(id: string): Promise<void>;
+
+  // Accessories
+  getAccessory(id: string): Promise<Accessory | undefined>;
+  getAccessories(filters?: ServiceFilters & { category?: string; condition?: string }): Promise<Accessory[]>;
+  createAccessory(accessory: InsertAccessory & { userId: string }): Promise<Accessory>;
+  updateAccessory(id: string, updates: Partial<Accessory>): Promise<Accessory>;
+  deleteAccessory(id: string): Promise<void>;
 }
 
 // ===== DATABASE STORAGE (PostgreSQL via Drizzle) =====
@@ -343,6 +351,53 @@ export class DatabaseStorage implements IStorage {
     if (!db) throw new Error("Database not connected");
     await db.delete(vetClinics).where(eq(vetClinics.id, id));
   }
+
+  // --- Accessories ---
+  async getAccessory(id: string): Promise<Accessory | undefined> {
+    if (!db) throw new Error("Database not connected");
+    const result = await db.select().from(accessories).where(eq(accessories.id, id)).limit(1);
+    return result[0] || undefined;
+  }
+
+  async getAccessories(filters: ServiceFilters & { category?: string; condition?: string } = {}): Promise<Accessory[]> {
+    if (!db) throw new Error("Database not connected");
+    const conditions = [];
+    if (filters.userId) conditions.push(eq(accessories.userId, filters.userId));
+    if (filters.status) conditions.push(eq(accessories.status, filters.status));
+    if (filters.region) conditions.push(eq(accessories.region, filters.region));
+    if (filters.category) conditions.push(eq(accessories.category, filters.category));
+    if (filters.condition) conditions.push(eq(accessories.condition, filters.condition));
+    let query = db.select().from(accessories);
+    if (conditions.length > 0) query = query.where(and(...conditions)) as any;
+    query = query.orderBy(desc(accessories.createdAt)) as any;
+    if (filters.limit) query = query.limit(filters.limit) as any;
+    if (filters.offset) query = query.offset(filters.offset) as any;
+    return await query;
+  }
+
+  async createAccessory(accessory: InsertAccessory & { userId: string }): Promise<Accessory> {
+    if (!db) throw new Error("Database not connected");
+    const id = randomUUID();
+    const result = await db.insert(accessories).values({
+      ...accessory, id, status: "active",
+      price: String(accessory.price),
+      images: accessory.images || [],
+    }).returning();
+    return result[0];
+  }
+
+  async updateAccessory(id: string, updates: Partial<Accessory>): Promise<Accessory> {
+    if (!db) throw new Error("Database not connected");
+    const { id: _id, ...updateData } = updates;
+    const result = await db.update(accessories).set({ ...updateData, updatedAt: new Date() }).where(eq(accessories.id, id)).returning();
+    if (!result[0]) throw new Error("Accessory not found");
+    return result[0];
+  }
+
+  async deleteAccessory(id: string): Promise<void> {
+    if (!db) throw new Error("Database not connected");
+    await db.delete(accessories).where(eq(accessories.id, id));
+  }
 }
 
 // ===== IN-MEMORY STORAGE (fallback for local dev without DB) =====
@@ -353,6 +408,7 @@ export class MemStorage implements IStorage {
   private suppliesMap: Map<string, Supply>;
   private staffListingsMap: Map<string, StaffListing>;
   private vetClinicsMap: Map<string, VetClinic>;
+  private accessoriesMap: Map<string, Accessory>;
 
   constructor() {
     this.users = new Map();
@@ -361,6 +417,7 @@ export class MemStorage implements IStorage {
     this.suppliesMap = new Map();
     this.staffListingsMap = new Map();
     this.vetClinicsMap = new Map();
+    this.accessoriesMap = new Map();
   }
 
   // --- Users ---
@@ -633,6 +690,51 @@ export class MemStorage implements IStorage {
 
   async deleteVetClinic(id: string): Promise<void> {
     this.vetClinicsMap.delete(id);
+  }
+
+  // --- Accessories ---
+  async getAccessory(id: string): Promise<Accessory | undefined> {
+    return this.accessoriesMap.get(id);
+  }
+
+  async getAccessories(filters: ServiceFilters & { category?: string; condition?: string } = {}): Promise<Accessory[]> {
+    let arr = Array.from(this.accessoriesMap.values());
+    if (filters.userId) arr = arr.filter(a => a.userId === filters.userId);
+    if (filters.status) arr = arr.filter(a => a.status === filters.status);
+    if (filters.region) arr = arr.filter(a => a.region === filters.region);
+    if (filters.category) arr = arr.filter(a => a.category === filters.category);
+    if (filters.condition) arr = arr.filter(a => a.condition === filters.condition);
+    arr.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    const offset = filters.offset || 0;
+    const limit = filters.limit || arr.length;
+    return arr.slice(offset, offset + limit);
+  }
+
+  async createAccessory(accessory: InsertAccessory & { userId: string }): Promise<Accessory> {
+    const id = randomUUID();
+    const item: Accessory = {
+      id, ...accessory, status: "active",
+      price: String(accessory.price),
+      currency: accessory.currency || "USD",
+      brand: accessory.brand || null,
+      description: accessory.description || null,
+      images: accessory.images || [],
+      createdAt: new Date(), updatedAt: new Date(),
+    };
+    this.accessoriesMap.set(id, item);
+    return item;
+  }
+
+  async updateAccessory(id: string, updates: Partial<Accessory>): Promise<Accessory> {
+    const item = this.accessoriesMap.get(id);
+    if (!item) throw new Error("Accessory not found");
+    const updated = { ...item, ...updates, id, updatedAt: new Date() };
+    this.accessoriesMap.set(id, updated);
+    return updated;
+  }
+
+  async deleteAccessory(id: string): Promise<void> {
+    this.accessoriesMap.delete(id);
   }
 }
 

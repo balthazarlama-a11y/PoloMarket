@@ -30,6 +30,16 @@ export default function Marketplace() {
       <Navbar />
 
       <div className="container px-4 py-8 flex-1">
+        {/* Accessories banner */}
+        <Link href="/accesorios">
+          <div className="mb-6 bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-200/50 rounded-xl px-5 py-3 flex items-center justify-between hover:shadow-md transition-all cursor-pointer group">
+            <div className="flex items-center gap-3">
+              <span className="text-lg">🏇</span>
+              <span className="text-sm font-medium text-violet-800">¿Buscás accesorios de polo? Monturas, tacos, botas y más</span>
+            </div>
+            <span className="text-violet-600 text-sm font-semibold group-hover:translate-x-1 transition-transform">Ver accesorios →</span>
+          </div>
+        </Link>
         <div className="flex flex-col md:flex-row gap-8">
 
           {/* Mobile Filter Toggle */}

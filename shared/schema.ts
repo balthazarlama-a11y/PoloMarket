@@ -254,3 +254,36 @@ export const insertVetClinicSchema = createInsertSchema(vetClinics, {
 
 export type InsertVetClinic = z.infer<typeof insertVetClinicSchema>;
 export type VetClinic = typeof vetClinics.$inferSelect;
+
+// ========== Accessories (Polo Gear) ==========
+export const accessories = pgTable("accessories", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  category: text("category").notNull(), // Monturas, Tacos, Botas, Cascos, Riendas, Protecciones, Otro
+  condition: text("condition").notNull(), // Nuevo, Usado - Excelente, Usado - Bueno, Usado - Regular
+  brand: text("brand"),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").default("USD"),
+  region: text("region").notNull(),
+  description: text("description"),
+  images: jsonb("images"),
+  status: text("status").default("active"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertAccessorySchema = createInsertSchema(accessories, {
+  title: z.string().min(1, "El título es requerido"),
+  category: z.enum(["Monturas", "Tacos", "Botas", "Cascos", "Riendas", "Protecciones", "Otro"]),
+  condition: z.enum(["Nuevo", "Usado - Excelente", "Usado - Bueno", "Usado - Regular"]),
+  brand: z.string().optional(),
+  price: z.string().or(z.number()),
+  currency: z.enum(["USD", "CLP", "ARS"]).optional(),
+  region: z.string().min(1, "La región es requerida"),
+  description: z.string().optional(),
+  images: z.array(z.string()).optional(),
+}).omit({ id: true, userId: true, status: true, createdAt: true, updatedAt: true });
+
+export type InsertAccessory = z.infer<typeof insertAccessorySchema>;
+export type Accessory = typeof accessories.$inferSelect;
