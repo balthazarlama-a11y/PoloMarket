@@ -26,9 +26,182 @@ export async function registerRoutes(
     try {
       if (!storage.db) return res.status(500).json({ status: "error", message: "No DB pool" });
       const now = await storage.db.execute(sql`SELECT NOW()`);
-      res.json({ status: "ok", timestamp: now[0] });
+      const tables = await storage.db.execute(sql`
+        SELECT table_name 
+        FROM information_schema.tables 
+        WHERE table_schema = 'public'
+      `);
+      res.json({ status: "ok", timestamp: now[0], tables: tables.map((t: any) => t.table_name) });
     } catch (err: any) {
       res.status(500).json({ status: "error", message: err.message });
+    }
+  });
+
+  // ========== Setup Route (Auto-Create Tables) ==========
+  app.get("/api/setup", async (_req, res) => {
+    try {
+      if (!storage.db) return res.status(500).json({ message: "No DB connection" });
+
+      // 1. Users
+      await storage.db.execute(sql.raw(`
+        CREATE TABLE IF NOT EXISTS "users" (
+          "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+          "email" text NOT NULL UNIQUE,
+          "password" text NOT NULL,
+          "name" text,
+          "rut" text UNIQUE,
+          "role" text DEFAULT 'Jugador',
+          "verified" boolean DEFAULT false,
+          "created_at" timestamp DEFAULT now() NOT NULL
+        );
+      `));
+
+      // 2. Plans
+      await storage.db.execute(sql.raw(`
+        CREATE TABLE IF NOT EXISTS "plans" (
+          "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+          "name" text NOT NULL,
+          "type" text NOT NULL,
+          "price" decimal(10, 2) NOT NULL,
+          "currency" text DEFAULT 'USD',
+          "duration" integer,
+          "features" jsonb,
+          "created_at" timestamp DEFAULT now() NOT NULL
+        );
+      `));
+
+      // 3. User Plans
+      await storage.db.execute(sql.raw(`
+        CREATE TABLE IF NOT EXISTS "user_plans" (
+          "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+          "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
+          "plan_id" varchar NOT NULL REFERENCES "plans"("id"),
+          "status" text DEFAULT 'active',
+          "expires_at" timestamp,
+          "created_at" timestamp DEFAULT now() NOT NULL
+        );
+      `));
+
+      // 4. Horses
+      await storage.db.execute(sql.raw(`
+        CREATE TABLE IF NOT EXISTS "horses" (
+          "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+          "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
+          "name" text NOT NULL,
+          "price" decimal(10, 2) NOT NULL,
+          "currency" text DEFAULT 'USD',
+          "age" integer NOT NULL,
+          "height" text NOT NULL,
+          "sex" text NOT NULL,
+          "type" text NOT NULL,
+          "location" text NOT NULL,
+          "description" text,
+          "pedigree" jsonb,
+          "aaccp_registry" text,
+          "polo_level" text,
+          "images" jsonb,
+          "video_url" text,
+          "plan_id" varchar REFERENCES "plans"("id"),
+          "status" text DEFAULT 'active',
+          "featured" boolean DEFAULT false,
+          "views" integer DEFAULT 0,
+          "created_at" timestamp DEFAULT now() NOT NULL,
+          "updated_at" timestamp DEFAULT now() NOT NULL
+        );
+      `));
+
+      // 5. Transports
+      await storage.db.execute(sql.raw(`
+        CREATE TABLE IF NOT EXISTS "transports" (
+          "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+          "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
+          "type" text NOT NULL,
+          "capacity" integer NOT NULL,
+          "origin_region" text NOT NULL,
+          "destination_region" text,
+          "price_per_km" decimal(10, 2),
+          "description" text,
+          "available" boolean DEFAULT true,
+          "status" text DEFAULT 'active',
+          "created_at" timestamp DEFAULT now() NOT NULL
+        );
+      `));
+
+      // 6. Supplies
+      await storage.db.execute(sql.raw(`
+        CREATE TABLE IF NOT EXISTS "supplies" (
+          "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+          "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
+          "name" text NOT NULL,
+          "type" text NOT NULL,
+          "price" decimal(10, 2),
+          "currency" text DEFAULT 'USD',
+          "stock" integer DEFAULT 1,
+          "description" text,
+          "region" text NOT NULL,
+          "images" jsonb,
+          "status" text DEFAULT 'active',
+          "created_at" timestamp DEFAULT now() NOT NULL
+        );
+      `));
+
+      // 7. Staff Listings
+      await storage.db.execute(sql.raw(`
+        CREATE TABLE IF NOT EXISTS "staff_listings" (
+          "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+          "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
+          "role" text NOT NULL,
+          "name" text NOT NULL,
+          "experience_years" integer NOT NULL,
+          "region" text NOT NULL,
+          "description" text,
+          "hourly_rate" decimal(10, 2),
+          "availability" text,
+          "status" text DEFAULT 'active',
+          "created_at" timestamp DEFAULT now() NOT NULL
+        );
+      `));
+
+      // 8. Vet Clinics
+      await storage.db.execute(sql.raw(`
+        CREATE TABLE IF NOT EXISTS "vet_clinics" (
+          "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+          "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
+          "name" text NOT NULL,
+          "address" text NOT NULL,
+          "region" text NOT NULL,
+          "phone" text NOT NULL,
+          "specialty" text,
+          "emergency_service" boolean DEFAULT false,
+          "open_hours" text,
+          "description" text,
+          "status" text DEFAULT 'active',
+          "created_at" timestamp DEFAULT now() NOT NULL
+        );
+      `));
+
+      // 9. Accessories
+      await storage.db.execute(sql.raw(`
+        CREATE TABLE IF NOT EXISTS "accessories" (
+          "id" varchar PRIMARY KEY DEFAULT gen_random_uuid(),
+          "user_id" varchar NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
+          "name" text NOT NULL,
+          "category" text NOT NULL,
+          "condition" text NOT NULL,
+          "price" decimal(10, 2) NOT NULL,
+          "currency" text DEFAULT 'USD',
+          "brand" text,
+          "description" text,
+          "images" jsonb,
+          "region" text NOT NULL,
+          "status" text DEFAULT 'active',
+          "created_at" timestamp DEFAULT now() NOT NULL
+        );
+      `));
+
+      res.json({ message: "All tables verified/created successfully" });
+    } catch (err: any) {
+      res.status(500).json({ message: `Setup error: ${err.message}` });
     }
   });
 
