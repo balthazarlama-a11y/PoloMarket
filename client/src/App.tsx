@@ -18,6 +18,7 @@ import ServiciosInsumos from "@/pages/servicios-insumos";
 import ServiciosStaff from "@/pages/servicios-staff";
 import ServiciosVeterinarias from "@/pages/servicios-veterinarias";
 import Accesorios from "@/pages/accesorios";
+import Publicar from "@/pages/publicar";
 
 function Router() {
   return (
@@ -36,6 +37,7 @@ function Router() {
       <Route path="/servicios/staff" component={ServiciosStaff} />
       <Route path="/servicios/veterinarias" component={ServiciosVeterinarias} />
       <Route path="/accesorios" component={Accesorios} />
+      <Route path="/publicar" component={Publicar} />
       <Route component={NotFound} />
     </Switch>
   );

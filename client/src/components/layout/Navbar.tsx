@@ -62,7 +62,7 @@ export function Navbar() {
     logoutMutation.mutate();
   };
 
-  const isServicesActive = location.startsWith("/servicios");
+  const isServicesActive = location.startsWith("/servicios") || location === "/accesorios";
 
   const getInitials = (name?: string, email?: string) => {
     if (name) return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
@@ -177,9 +177,21 @@ export function Navbar() {
               )}
             </a>
           </Link>
+        </div>
+
+        {/* Right Actions */}
+        <div className="flex items-center">
+          {/* Publicar Button (Desktop) */}
+          <div className="hidden md:flex items-center mr-4">
+            <Link href="/publicar">
+              <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl shadow-md hover:shadow-lg transition-all gap-2 h-10 px-6">
+                <span className="text-xl leading-none pb-1">+</span> Publicar
+              </Button>
+            </Link>
+          </div>
 
           {/* Auth buttons */}
-          <div className="flex items-center gap-3 border-l border-border/50 pl-6 ml-4">
+          <div className="hidden md:flex items-center gap-3 border-l border-border/50 pl-6">
             {user ? (
               <>
                 <Link href="/dashboard">
@@ -215,15 +227,15 @@ export function Navbar() {
               </>
             )}
           </div>
-        </div>
 
-        {/* Mobile Menu Toggle */}
-        <button
-          className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+          {/* Mobile Menu Toggle */}
+          <button
+            className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors ml-4"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Nav — Animated */}
@@ -254,6 +266,16 @@ export function Navbar() {
               onClick={() => setIsOpen(false)}
             >
               Marketplace
+            </a>
+          </Link>
+
+          {/* Mobile Publicar */}
+          <Link href="/publicar">
+            <a
+              className="block py-3 px-4 text-sm font-medium rounded-lg transition-colors bg-gradient-to-r from-primary/10 to-primary/5 text-primary"
+              onClick={() => setIsOpen(false)}
+            >
+              + Publicar aviso
             </a>
           </Link>
 
