@@ -43,7 +43,8 @@ export async function registerRoutes(
       if (error.name === "ZodError") {
         return res.status(400).json({ message: "Datos inválidos", errors: error.errors });
       }
-      res.status(500).json({ message: "Error al registrar usuario" });
+      console.error("Registration error:", error);
+      res.status(500).json({ message: `Error al registrar usuario: ${error.message || "Unknown error"}` });
     }
   });
 
