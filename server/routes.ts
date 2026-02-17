@@ -9,11 +9,47 @@ import {
 } from "@shared/schema";
 import { validateRUT } from "@shared/utils";
 import bcrypt from "bcryptjs";
+import { sql } from "drizzle-orm";
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
+  // ========== Debug route (Temporary) ==========
+  app.get("/api/debug", async (_req, res) => {
+    try {
+      if (!storage.db) {
+        return res.status(500).json({ status: "error", message: "Database not initialized (pool is null)" });
+      }
+
+      // Check connection by running a simple query
+      const now = await storage.db.execute(sql`SELECT NOW()`);
+
+      // Check tables
+      const tables = await storage.db.execute(sql`
+        SELECT table_name 
+        FROM information_schema.tables 
+        WHERE table_schema = 'public'
+      `);
+
+      res.json({
+        status: "ok",
+        timestamp: now[0],
+        tables: tables.map((t: any) => t.table_name),
+        env: {
+          hasDbUrl: !!process.env.DATABASE_URL,
+          nodeEnv: process.env.NODE_ENV
+        }
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        status: "error",
+        message: error.message,
+        stack: error.stack
+      });
+    }
+  });
+
   // ========== Auth routes ==========
   app.post("/api/auth/register", async (req, res) => {
     try {

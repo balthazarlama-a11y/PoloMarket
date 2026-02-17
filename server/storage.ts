@@ -69,10 +69,15 @@ export interface IStorage {
   createAccessory(accessory: InsertAccessory & { userId: string }): Promise<Accessory>;
   updateAccessory(id: string, updates: Partial<Accessory>): Promise<Accessory>;
   deleteAccessory(id: string): Promise<void>;
+
+  // Debug
+  db?: any;
 }
 
 // ===== DATABASE STORAGE (PostgreSQL via Drizzle) =====
 export class DatabaseStorage implements IStorage {
+  public db = db;
+
   // --- Users ---
   async getUser(id: string): Promise<User | undefined> {
     if (!db) throw new Error("Database not connected");
