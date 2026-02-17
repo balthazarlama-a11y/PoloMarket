@@ -1,11 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
-import session from "express-session";
+import cookieParser from "cookie-parser";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
-
-import pgSession from "connect-pg-simple";
-import { pool } from "./db";
 
 const app = express();
 const httpServer = createServer(app);
@@ -19,12 +16,6 @@ declare module "http" {
   }
 }
 
-declare module "express-session" {
-  interface SessionData {
-    userId?: string;
-  }
-}
-
 app.use(
   express.json({
     verify: (req, _res, buf) => {
@@ -34,41 +25,7 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
-
-// Configure session with PostgreSQL store
-const PgSessionStore = pgSession(session);
-const MemoryStore = session.MemoryStore;
-
-let store: session.Store;
-
-if (pool) {
-  store = new PgSessionStore({
-    pool: pool,
-    createTableIfMissing: false, // Prevent startup crash, will handle in routes
-  });
-  // CRITICAL: Handle session store errors to prevent app crash
-  store.on("error", (err) => {
-    console.error("Session store error:", err);
-  });
-} else {
-  console.warn("Using MemoryStore for session (database not available)");
-  store = new MemoryStore();
-}
-
-app.use(
-  session({
-    store,
-    secret: process.env.SESSION_SECRET || "polomarket-secret-key-change-in-production",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
-      sameSite: "lax",
-    },
-  })
-);
+app.use(cookieParser());
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {

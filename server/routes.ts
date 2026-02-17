@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import {
@@ -10,6 +10,9 @@ import {
 import { validateRUT } from "@shared/utils";
 import bcrypt from "bcryptjs";
 import { sql } from "drizzle-orm";
+import jwt from "jsonwebtoken";
+
+const JWT_SECRET = process.env.SESSION_SECRET || "polomarket-secret-key-change-in-production";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -18,65 +21,18 @@ export async function registerRoutes(
   // Removed blocking DB checks from startup to prevent timeouts.
   // Table verification is now handled via /api/debug or manual migration.
 
-  // ========== Debug route (Temporary) ==========
+  // ========== Debug route (SimpleDB Check) ==========
   app.get("/api/debug", async (_req, res) => {
     try {
-      if (!storage.db) {
-        return res.status(500).json({ status: "error", message: "Database not initialized (pool is null)" });
-      }
-
-      // Try to create session table here (lazily) to fix missing table issues without crashing boot
-      let sessionTableStatus = "checked";
-      try {
-        await storage.db.execute(sql.raw(`
-            CREATE TABLE IF NOT EXISTS "session" (
-              "sid" varchar NOT NULL COLLATE "default",
-              "sess" json NOT NULL,
-              "expire" timestamp(6) NOT NULL
-            )
-            WITH (OIDS=FALSE);
-         `));
-        await storage.db.execute(sql.raw(`
-            ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
-         `)).catch(() => { });
-        await storage.db.execute(sql.raw(`
-            CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire");
-         `));
-        sessionTableStatus = "verified_and_created";
-      } catch (err: any) {
-        sessionTableStatus = "error: " + err.message;
-      }
-
-      // Check connection by running a simple query
+      if (!storage.db) return res.status(500).json({ status: "error", message: "No DB pool" });
       const now = await storage.db.execute(sql`SELECT NOW()`);
-
-      // Check tables
-      const tables = await storage.db.execute(sql`
-        SELECT table_name 
-        FROM information_schema.tables 
-        WHERE table_schema = 'public'
-      `);
-
-      res.json({
-        status: "ok",
-        sessionTable: sessionTableStatus,
-        timestamp: now[0],
-        tables: tables.map((t: any) => t.table_name),
-        env: {
-          hasDbUrl: !!process.env.DATABASE_URL,
-          nodeEnv: process.env.NODE_ENV
-        }
-      });
-    } catch (error: any) {
-      res.status(500).json({
-        status: "error",
-        message: error.message,
-        stack: error.stack
-      });
+      res.json({ status: "ok", timestamp: now[0] });
+    } catch (err: any) {
+      res.status(500).json({ status: "error", message: err.message });
     }
   });
 
-  // ========== Auth routes ==========
+  // ========== Auth routes (JWT) ==========
   app.post("/api/auth/register", async (req, res) => {
     try {
       const body = insertUserSchema.parse(req.body);
@@ -98,15 +54,26 @@ export async function registerRoutes(
         email: body.email, password: hashedPassword,
         name: body.name, rut: body.rut, role: body.role,
       });
-      req.session.userId = user.id;
+
+      // Generate JWT
+      const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "30d" });
+
+      // Set secure cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 1000 * 60 * 60 * 24 * 30 // 30 days
+      });
+
       const { password, ...userWithoutPassword } = user;
       res.status(201).json({ user: userWithoutPassword });
     } catch (error: any) {
       if (error.name === "ZodError") {
         return res.status(400).json({ message: "Datos inválidos", errors: error.errors });
       }
-      console.error("Registration error:", error);
-      res.status(500).json({ message: `Error al registrar usuario: ${error.message || "Unknown error"}` });
+      console.error("Register error:", error);
+      res.status(500).json({ message: "Error al registrar usuario" });
     }
   });
 
@@ -124,7 +91,18 @@ export async function registerRoutes(
       if (!isValid) {
         return res.status(401).json({ message: "Email o contraseña incorrectos" });
       }
-      req.session.userId = user.id;
+
+      // Generate JWT
+      const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "30d" });
+
+      // Set secure cookie
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 1000 * 60 * 60 * 24 * 30 // 30 days
+      });
+
       const { password: _, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
     } catch (error) {
@@ -132,38 +110,46 @@ export async function registerRoutes(
     }
   });
 
-  app.post("/api/auth/logout", (req, res) => {
-    req.session.destroy((err) => {
-      if (err) {
-        return res.status(500).json({ message: "Error al cerrar sesión" });
-      }
-      res.clearCookie("connect.sid");
-      res.json({ message: "Sesión cerrada" });
-    });
+  app.post("/api/auth/logout", (_req, res) => {
+    res.clearCookie("token");
+    res.json({ message: "Sesión cerrada" });
   });
 
   app.get("/api/auth/me", async (req, res) => {
     try {
-      if (!req.session.userId) {
+      const token = req.cookies.token;
+      if (!token) {
         return res.status(401).json({ message: "No autenticado" });
       }
-      const user = await storage.getUser(req.session.userId);
+
+      const payload = jwt.verify(token, JWT_SECRET) as { userId: string };
+      const user = await storage.getUser(payload.userId);
+
       if (!user) {
         return res.status(401).json({ message: "Usuario no encontrado" });
       }
       const { password, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
     } catch (error) {
-      res.status(500).json({ message: "Error al obtener usuario" });
+      res.status(401).json({ message: "Sesión inválida o expirada" });
     }
   });
 
   // ========== Auth middleware ==========
-  const requireAuth = (req: any, res: any, next: any) => {
-    if (!req.session.userId) {
-      return res.status(401).json({ message: "No autenticado" });
+  const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ message: "Autenticación requerida" });
     }
-    next();
+
+    try {
+      const payload = jwt.verify(token, JWT_SECRET) as { userId: string };
+      // Attach userId to request for use in handlers
+      (req as any).userId = payload.userId;
+      next();
+    } catch (err) {
+      return res.status(401).json({ message: "Sesión inválida" });
+    }
   };
 
   // ========== Horse routes ==========
@@ -200,7 +186,7 @@ export async function registerRoutes(
   app.post("/api/horses", requireAuth, async (req, res) => {
     try {
       const body = insertHorseSchema.parse(req.body);
-      const horse = await storage.createHorse({ ...body, userId: req.session.userId! });
+      const horse = await storage.createHorse({ ...body, userId: (req as any).userId! });
       res.status(201).json({ horse });
     } catch (error: any) {
       if (error.name === "ZodError") {
@@ -214,7 +200,7 @@ export async function registerRoutes(
     try {
       const horse = await storage.getHorse(req.params.id);
       if (!horse) return res.status(404).json({ message: "Caballo no encontrado" });
-      if (horse.userId !== req.session.userId) return res.status(403).json({ message: "No tienes permiso para editar este caballo" });
+      if (horse.userId !== (req as any).userId) return res.status(403).json({ message: "No tienes permiso para editar este caballo" });
       const body = insertHorseSchema.partial().parse(req.body);
       const updated = await storage.updateHorse(req.params.id, body as any);
       res.json({ horse: updated });
@@ -230,7 +216,7 @@ export async function registerRoutes(
     try {
       const horse = await storage.getHorse(req.params.id);
       if (!horse) return res.status(404).json({ message: "Caballo no encontrado" });
-      if (horse.userId !== req.session.userId) return res.status(403).json({ message: "No tienes permiso para eliminar este caballo" });
+      if (horse.userId !== (req as any).userId) return res.status(403).json({ message: "No tienes permiso para eliminar este caballo" });
       await storage.deleteHorse(req.params.id);
       res.json({ message: "Caballo eliminado" });
     } catch (error) {
@@ -272,7 +258,7 @@ export async function registerRoutes(
   app.post("/api/services/transports", requireAuth, async (req, res) => {
     try {
       const body = insertTransportSchema.parse(req.body);
-      const item = await storage.createTransport({ ...body, userId: req.session.userId! });
+      const item = await storage.createTransport({ ...body, userId: (req as any).userId! });
       res.status(201).json({ transport: item });
     } catch (error: any) {
       if (error.name === "ZodError") return res.status(400).json({ message: "Datos inválidos", errors: error.errors });
@@ -284,7 +270,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getTransport(req.params.id);
       if (!item) return res.status(404).json({ message: "Transporte no encontrado" });
-      if (item.userId !== req.session.userId) return res.status(403).json({ message: "Sin permiso" });
+      if (item.userId !== (req as any).userId) return res.status(403).json({ message: "Sin permiso" });
       const body = insertTransportSchema.partial().parse(req.body);
       const updated = await storage.updateTransport(req.params.id, body as any);
       res.json({ transport: updated });
@@ -298,7 +284,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getTransport(req.params.id);
       if (!item) return res.status(404).json({ message: "Transporte no encontrado" });
-      if (item.userId !== req.session.userId) return res.status(403).json({ message: "Sin permiso" });
+      if (item.userId !== (req as any).userId) return res.status(403).json({ message: "Sin permiso" });
       await storage.deleteTransport(req.params.id);
       res.json({ message: "Transporte eliminado" });
     } catch (error) {
@@ -336,7 +322,7 @@ export async function registerRoutes(
   app.post("/api/services/supplies", requireAuth, async (req, res) => {
     try {
       const body = insertSupplySchema.parse(req.body);
-      const item = await storage.createSupply({ ...body, userId: req.session.userId! });
+      const item = await storage.createSupply({ ...body, userId: (req as any).userId! });
       res.status(201).json({ supply: item });
     } catch (error: any) {
       if (error.name === "ZodError") return res.status(400).json({ message: "Datos inválidos", errors: error.errors });
@@ -348,7 +334,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getSupply(req.params.id);
       if (!item) return res.status(404).json({ message: "Insumo no encontrado" });
-      if (item.userId !== req.session.userId) return res.status(403).json({ message: "Sin permiso" });
+      if (item.userId !== (req as any).userId) return res.status(403).json({ message: "Sin permiso" });
       const body = insertSupplySchema.partial().parse(req.body);
       const updated = await storage.updateSupply(req.params.id, body as any);
       res.json({ supply: updated });
@@ -362,7 +348,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getSupply(req.params.id);
       if (!item) return res.status(404).json({ message: "Insumo no encontrado" });
-      if (item.userId !== req.session.userId) return res.status(403).json({ message: "Sin permiso" });
+      if (item.userId !== (req as any).userId) return res.status(403).json({ message: "Sin permiso" });
       await storage.deleteSupply(req.params.id);
       res.json({ message: "Insumo eliminado" });
     } catch (error) {
@@ -400,7 +386,7 @@ export async function registerRoutes(
   app.post("/api/services/staff", requireAuth, async (req, res) => {
     try {
       const body = insertStaffListingSchema.parse(req.body);
-      const item = await storage.createStaffListing({ ...body, userId: req.session.userId! });
+      const item = await storage.createStaffListing({ ...body, userId: (req as any).userId! });
       res.status(201).json({ staffListing: item });
     } catch (error: any) {
       if (error.name === "ZodError") return res.status(400).json({ message: "Datos inválidos", errors: error.errors });
@@ -412,7 +398,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getStaffListing(req.params.id);
       if (!item) return res.status(404).json({ message: "Staff no encontrado" });
-      if (item.userId !== req.session.userId) return res.status(403).json({ message: "Sin permiso" });
+      if (item.userId !== (req as any).userId) return res.status(403).json({ message: "Sin permiso" });
       const body = insertStaffListingSchema.partial().parse(req.body);
       const updated = await storage.updateStaffListing(req.params.id, body);
       res.json({ staffListing: updated });
@@ -426,7 +412,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getStaffListing(req.params.id);
       if (!item) return res.status(404).json({ message: "Staff no encontrado" });
-      if (item.userId !== req.session.userId) return res.status(403).json({ message: "Sin permiso" });
+      if (item.userId !== (req as any).userId) return res.status(403).json({ message: "Sin permiso" });
       await storage.deleteStaffListing(req.params.id);
       res.json({ message: "Staff eliminado" });
     } catch (error) {
@@ -465,7 +451,7 @@ export async function registerRoutes(
   app.post("/api/services/vets", requireAuth, async (req, res) => {
     try {
       const body = insertVetClinicSchema.parse(req.body);
-      const item = await storage.createVetClinic({ ...body, userId: req.session.userId! });
+      const item = await storage.createVetClinic({ ...body, userId: (req as any).userId! });
       res.status(201).json({ vetClinic: item });
     } catch (error: any) {
       if (error.name === "ZodError") return res.status(400).json({ message: "Datos inválidos", errors: error.errors });
@@ -477,7 +463,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getVetClinic(req.params.id);
       if (!item) return res.status(404).json({ message: "Veterinaria no encontrada" });
-      if (item.userId !== req.session.userId) return res.status(403).json({ message: "Sin permiso" });
+      if (item.userId !== (req as any).userId) return res.status(403).json({ message: "Sin permiso" });
       const body = insertVetClinicSchema.partial().parse(req.body);
       const updated = await storage.updateVetClinic(req.params.id, body);
       res.json({ vetClinic: updated });
@@ -491,7 +477,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getVetClinic(req.params.id);
       if (!item) return res.status(404).json({ message: "Veterinaria no encontrada" });
-      if (item.userId !== req.session.userId) return res.status(403).json({ message: "Sin permiso" });
+      if (item.userId !== (req as any).userId) return res.status(403).json({ message: "Sin permiso" });
       await storage.deleteVetClinic(req.params.id);
       res.json({ message: "Veterinaria eliminada" });
     } catch (error) {
@@ -531,7 +517,7 @@ export async function registerRoutes(
   app.post("/api/accessories", requireAuth, async (req, res) => {
     try {
       const body = insertAccessorySchema.parse(req.body);
-      const item = await storage.createAccessory({ ...body, userId: req.session.userId! });
+      const item = await storage.createAccessory({ ...body, userId: (req as any).userId! });
       res.status(201).json({ accessory: item });
     } catch (error: any) {
       if (error.name === "ZodError") return res.status(400).json({ message: "Datos inválidos", errors: error.errors });
@@ -543,7 +529,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getAccessory(req.params.id);
       if (!item) return res.status(404).json({ message: "Accesorio no encontrado" });
-      if (item.userId !== req.session.userId) return res.status(403).json({ message: "Sin permiso" });
+      if (item.userId !== (req as any).userId) return res.status(403).json({ message: "Sin permiso" });
       const body = insertAccessorySchema.partial().parse(req.body);
       const updated = await storage.updateAccessory(req.params.id, body as any);
       res.json({ accessory: updated });
@@ -557,7 +543,7 @@ export async function registerRoutes(
     try {
       const item = await storage.getAccessory(req.params.id);
       if (!item) return res.status(404).json({ message: "Accesorio no encontrado" });
-      if (item.userId !== req.session.userId) return res.status(403).json({ message: "Sin permiso" });
+      if (item.userId !== (req as any).userId) return res.status(403).json({ message: "Sin permiso" });
       await storage.deleteAccessory(req.params.id);
       res.json({ message: "Accesorio eliminado" });
     } catch (error) {

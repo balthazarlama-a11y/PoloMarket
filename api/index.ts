@@ -1,16 +1,10 @@
 import express from "express";
-import session from "express-session";
+import cookieParser from "cookie-parser";
 import { registerRoutes } from "../server/routes";
 import { createServer } from "http";
 
 const app = express();
 const httpServer = createServer(app);
-
-declare module "express-session" {
-    interface SessionData {
-        userId?: string;
-    }
-}
 
 declare module "http" {
     interface IncomingMessage {
@@ -27,21 +21,7 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
-
-// Configure session for serverless
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET || "polomarket-secret-key-change-in-production",
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            secure: process.env.NODE_ENV === "production",
-            httpOnly: true,
-            maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-            sameSite: "lax",
-        },
-    })
-);
+app.use(cookieParser());
 
 // Register all routes
 let isRegistered = false;
