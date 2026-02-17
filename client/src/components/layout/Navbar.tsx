@@ -87,7 +87,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex md:items-center md:gap-1">
+        <div className="hidden lg:flex lg:items-center lg:gap-1">
           {/* Inicio */}
           <Link href="/">
             <a className={cn(
@@ -182,7 +182,7 @@ export function Navbar() {
         {/* Right Actions */}
         <div className="flex items-center">
           {/* Publicar Button (Desktop) */}
-          <div className="hidden md:flex items-center mr-4">
+          <div className="hidden lg:flex items-center mr-4">
             <Link href="/publicar">
               <Button className="bg-primary hover:bg-primary/90 text-white rounded-xl shadow-md hover:shadow-lg transition-all gap-2 h-10 px-6">
                 <span className="text-xl leading-none pb-1">+</span> Publicar
@@ -191,7 +191,7 @@ export function Navbar() {
           </div>
 
           {/* Auth buttons */}
-          <div className="hidden md:flex items-center gap-3 border-l border-border/50 pl-6">
+          <div className="hidden lg:flex items-center gap-3 border-l border-border/50 pl-6">
             {user ? (
               <>
                 <Link href="/dashboard">
@@ -230,7 +230,7 @@ export function Navbar() {
 
           {/* Mobile Menu Toggle */}
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors ml-4"
+            className="lg:hidden p-2 rounded-lg hover:bg-accent transition-colors ml-4"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -241,7 +241,7 @@ export function Navbar() {
       {/* Mobile Nav — Animated */}
       <div
         className={cn(
-          "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
+          "lg:hidden overflow-hidden transition-all duration-300 ease-in-out",
           isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
         )}
       >

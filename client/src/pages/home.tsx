@@ -162,10 +162,10 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-6 max-w-7xl mx-auto">
             {/* Transport */}
             <Link href="/servicios/transporte">
-              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden">
+              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden w-full sm:w-[calc(50%-12px)] lg:w-[calc(20%-20px)] min-w-[250px] max-w-[300px]">
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative z-10">
                   <div className="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-emerald-500 transition-all duration-500">
@@ -182,7 +182,7 @@ export default function Home() {
 
             {/* Supplies */}
             <Link href="/servicios/insumos">
-              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden">
+              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden w-full sm:w-[calc(50%-12px)] lg:w-[calc(20%-20px)] min-w-[250px] max-w-[300px]">
                 <div className="absolute inset-0 bg-gradient-to-br from-amber-50/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative z-10">
                   <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-amber-500 transition-all duration-500">
@@ -199,7 +199,7 @@ export default function Home() {
 
             {/* Staff */}
             <Link href="/servicios/staff">
-              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden">
+              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden w-full sm:w-[calc(50%-12px)] lg:w-[calc(20%-20px)] min-w-[250px] max-w-[300px]">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-50/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative z-10">
                   <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-blue-500 transition-all duration-500">
@@ -216,7 +216,7 @@ export default function Home() {
 
             {/* Vets */}
             <Link href="/servicios/veterinarias">
-              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden">
+              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden w-full sm:w-[calc(50%-12px)] lg:w-[calc(20%-20px)] min-w-[250px] max-w-[300px]">
                 <div className="absolute inset-0 bg-gradient-to-br from-rose-50/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative z-10">
                   <div className="w-14 h-14 rounded-2xl bg-rose-100 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-rose-500 transition-all duration-500">
@@ -233,7 +233,7 @@ export default function Home() {
 
             {/* Accessories */}
             <Link href="/accesorios">
-              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden sm:col-span-2 lg:col-span-1">
+              <div className="group relative bg-white rounded-2xl border border-border/50 p-7 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer overflow-hidden w-full sm:w-[calc(50%-12px)] lg:w-[calc(20%-20px)] min-w-[250px] max-w-[300px]">
                 <div className="absolute inset-0 bg-gradient-to-br from-violet-50/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative z-10">
                   <div className="w-14 h-14 rounded-2xl bg-violet-100 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-violet-500 transition-all duration-500">
