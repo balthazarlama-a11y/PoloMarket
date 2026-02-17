@@ -37,13 +37,19 @@ app.use(express.urlencoded({ extended: false }));
 
 // Configure session with PostgreSQL store
 const PgSessionStore = pgSession(session);
+const store = new PgSessionStore({
+  pool: pool || undefined,
+  createTableIfMissing: true,
+});
+
+// CRITICAL: Handle session store errors to prevent app crash
+store.on("error", (err) => {
+  console.error("Session store error:", err);
+});
 
 app.use(
   session({
-    store: new PgSessionStore({
-      pool: pool || undefined,
-      createTableIfMissing: true,
-    }),
+    store,
     secret: process.env.SESSION_SECRET || "polomarket-secret-key-change-in-production",
     resave: false,
     saveUninitialized: false,
